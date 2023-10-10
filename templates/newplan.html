@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title%}
+OUR PLANS
+{% endblock %}
+
+{% block content%}
+<div class="m-5">
+<h1 class="fw-bold text-white"> INVESTMENT PLANS </h1><br>
+
+{% for plan in plans %}
+    <a href="{% url 'payment' %}" class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
+        <div class="card-body">
+            <h4 class="card-title text-center"><strong>&gt;$ {{ plan.plan_price }}</strong></h4>
+            <p class="card-text text-center" style="font-size: 1.2em;">({{ plan.plan_min_percentage }}% - {{ plan.plan_max_percentage }}%)</p>
+            <p class="card-text text-center" style="font-size: 1.2em;">Day - (${{ plan.plan_min_profit }} - ${{ plan.plan_max_profit }})</p>
+        </div>
+    </a>
+{% endfor %}
+
+
+<br>
+
+{% endblock %}

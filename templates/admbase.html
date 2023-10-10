@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="{% static '/css/bootstrap.css'%}">
+  </head>
+  <body style="background-color:">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+      <div class="container">
+          <a class="navbar-brand" href="{% url 'admindex' %}">
+              <h1 class="text-white fw-bold">ADMIN AI FX TRADING</h1>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+         
+      </div>
+  </nav>
+  
+
+  <div class="container-fluid">
+      <div class="row">
+          <!-- Sidebar -->
+          <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+              <div class="position-sticky">
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admindex' %}">
+                            DASHBOARD
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          REGISTRATIONS
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <!-- Dropdown items go here -->
+                          <a class="dropdown-item" href="{% url 'admindex' %}">Option 1</a>
+                          <a class="dropdown-item" href="{% url 'admindex' %}">Option 2</a>
+                          <!-- Add more dropdown items as needed -->
+                        </div>
+                      </li>
+                      
+                      <li class="nav-item">
+                          <a class="nav-link p-4" href="{% url 'admreg' %}">
+                              REGISTRATIONS
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link p-4" href="{% url 'admregact' %}">
+                              ACTIVE USERS
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admpayments' %}">
+                            PAYMENTS
+                        </a>
+                    </li>
+                      <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admwithdraw' %}">
+                            WITHDRAW
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admaddprofit' %}">
+                            ADD PROFIT
+
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admindex' %}">
+                            ADD 
+                        </a>
+                    </li>
+                      <!-- Add more menu items here -->
+                  </ul>
+              </div>
+          </nav>
+  
+              <!-- Content -->
+              <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    
+    
+
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+	<script src="{% static '/js/bootstrap.js'%}"></script>
+  </body>
+</html>

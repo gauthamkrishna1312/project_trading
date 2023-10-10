@@ -1,0 +1,31 @@
+{% extends 'admbase.html' %}
+
+{% block title%}
+ADMIN REGISTRATIONS
+{% endblock %}
+
+{% block content%}
+<div class="m-5">
+<h1> REGISTRATIONS </h1>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">USERNAME</th>
+        <th scope="col">STATUS</th>
+        <th scope="col">REFFERED BY</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+        <tr>
+          <th scope="row">1</th>
+          <td>{{ member.username }}</td>
+          <td>Otto</td>
+          <td>@mdo</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
