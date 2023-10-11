@@ -31,3 +31,4 @@ function closeSidebarOnClickOutside(event) {
         document.removeEventListener('click', closeSidebarOnClickOutside);
     }
 }
+
