@@ -4,6 +4,7 @@ from django.views import View
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.shortcuts import redirect
 
 from . import models
 
@@ -13,104 +14,6 @@ class Index_view(View):
     def get(self, request):
         return render(request, 'index.html')
 
-class Contact_view(View):
-
-    def get(self, request):
-        return render(request, 'contact.html')
-
-class Yourplan_view(View):
-
-    def get(self, request):
-
-        user_plan = models.User_plan.objects.filter(user=request.user)
-        context = {
-            "user_plans": user_plan,
-        }
-        return render(request, 'yourplan.html', context=context)
-
-class Newplan_view(View):
-
-    def get(self, request):
-
-        context = {
-            "plans": models.Plans.objects.all(),
-        }
-        return render(request, 'newplan.html', context=context)
-
-class Profit_view(View):
-
-    def get(self,request):
-        return render(request, 'profit.html')
-
-class Withdraw_view(View):
-
-    def get(self,request):
-        return render(request, 'withdraw.html')
-
-class Refer_view(View):
-    
-    def get(self,request):
-        return render(request, 'refer.html')
-
-class Payment_view(View):
-
-    def get(self,request):
-        return render(request, 'payment.html')
-    
-class Profile_view(View):
-
-    def get(self,request):
-        return render(request, 'profile.html')
-
-class History_view(View):
-
-    def get(self,request):
-        return render(request, 'history.html')
-
-class Admindex_view(View):
-
-    def get(self,request):
-        return render(request, 'admindex.html')
-
-class Admreg_view(View):
-
-    def get(self,request):
-
-        context = {
-            "members": User.objects.all(),
-        }
-
-        return render(request, 'admreg.html', context=context)
-
-class Admregact_view(View):
-
-    def get(self,request):
-        return render(request, 'admregact.html')
-
-class Admpayments_view(View):
-
-    def get(self,request):
-        return render(request, 'admpayments.html')
-
-class Admwithdraw_view(View):
-
-    def get(self,request):
-        return render(request, 'admwithdraw.html')
-
-class Admaddplan_view(View):
-
-    def get(self,request):
-        return render(request, 'admaddplan.html')
-    
-class Admeditplan_view(View):
-
-    def get(self,request):
-        return render(request, 'admeditplan.html')
-    
-class Admaddprofit_view(View):
-
-    def get(self,request):
-        return render(request, 'admaddprofit.html')
 
 class Signup_view(View):
 
@@ -147,12 +50,158 @@ class Login_view(View):
         
         if user is not None:
             login(request, user)
+            if request.user.is_superuser:
+                return redirect("admindex")
             return render(request, "index.html")
         
 class Logout_view(View):
-
+    
     def get(self, request):
 
         logout(request)
         messages.info(request, "logged out")
-        return render(request, "index.html")
+        return redirect("home")
+
+
+
+class Contact_view(View):
+    
+    def get(self, request):
+        return render(request, 'contact.html')
+
+class Yourplan_view(View):
+    
+    def get(self, request):
+
+        user_plan = models.User_plan.objects.filter(user=request.user)
+        context = {
+            "user_plans": user_plan,
+        }
+        return render(request, 'yourplan.html', context=context)
+
+class Newplan_view(View):
+    
+    def get(self, request):
+
+        context = {
+            "plans": models.Plans.objects.all(),
+        }
+        return render(request, 'newplan.html', context=context)
+
+class Profit_view(View):
+    
+    def get(self,request):
+        return render(request, 'profit.html')
+
+class Withdraw_view(View):
+    
+    def get(self,request):
+        return render(request, 'withdraw.html')
+
+class Refer_view(View):
+    
+    def get(self,request):
+        return render(request, 'refer.html')
+
+class Payment_view(View):
+    
+    def get(self,request, plan_id):
+
+        plan = models.Plans.objects.get(id=plan_id)
+        context = {
+            "plan": plan
+        }
+        return render(request, 'payment.html', context=context)
+    
+    def post(self, request, plan_id):
+        
+        transaction_name = request.POST["transaction_name"]
+        transaction_id = request.POST["transaction_id"]
+        amount = request.POST["amount"]
+
+        plan = models.Plans.objects.get(id=plan_id)
+        if int(amount) < int(plan.plan_price):
+            messages.info(request, "amount is low")
+            return render(request, "payment.html")
+        else:
+            user_plan = models.User_plan()
+            user_plan.user = request.user
+            user_plan.plan = plan
+            user_plan.invested_amount = amount
+            user_plan.plan_status = "Processing"
+            user_plan.profit = "0"
+            user_plan.save()
+
+            payment = models.Payment()
+            payment.user_plan = user_plan
+            payment.transaction_name = transaction_name
+            payment.transaction_id = transaction_id
+            payment.save()
+            messages.info(request, "payment is requested")
+            context = {
+                "user_plans": models.User_plan.objects.all(),
+            }
+            return redirect("yourplan")
+    
+class Profile_view(View):
+    
+    def get(self,request):
+        return render(request, 'profile.html')
+
+class History_view(View):
+    
+    def get(self,request):
+        return render(request, 'history.html')
+
+
+
+
+class Admindex_view(View):
+    
+    def get(self,request):
+        return render(request, 'admindex.html')
+
+class Admreg_view(View):
+    
+    def get(self,request):
+
+        context = {
+            "members": User.objects.all(),
+        }
+
+        return render(request, 'admreg.html', context=context)
+
+class Admregact_view(View):
+    
+    def get(self,request):
+        return render(request, 'admregact.html')
+
+class Admpayments_view(View):
+    
+    def get(self,request):
+
+        context = {
+            "payments": models.Payment.objects.all()
+        }
+
+        return render(request, "admpayments.html", context=context) 
+
+class Admwithdraw_view(View):
+    
+    def get(self,request):
+        return render(request, 'admwithdraw.html')
+
+class Admaddplan_view(View):
+    
+    def get(self,request):
+        return render(request, 'admaddplan.html')
+    
+class Admeditplan_view(View):
+    
+    def get(self,request):
+        return render(request, 'admeditplan.html')
+    
+class Admaddprofit_view(View):
+    
+    def get(self,request):
+        return render(request, 'admaddprofit.html')

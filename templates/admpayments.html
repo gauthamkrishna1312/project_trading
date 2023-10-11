@@ -13,18 +13,25 @@ ADMIN PAYMENTS
       <tr>
         <th scope="col">#</th>
         <th scope="col">USERNAME</th>
+        <th scope="col">NAME</th>
+        <th scope="col">PLAN</th>
         <th scope="col">AMOUNT</th>
         <th scope="col">STATUS</th>
         
       </tr>
     </thead>
     <tbody>
+      {% for payment in payments %}
       <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
+        <th scope="row">{{ payment.id }}</th>
+        <td>{{ payment.user_plan.user.username }}</td>
+        <td>{{ payment.transaction_name }}</td>
+        <td>{{ payment.user_plan.plan.plan_name }}</td>
+        <td>{{ payment.user_plan.invested_amount }}</td>
+        <td>{{ payment.user_plan.plan_status }}</td
         <td>@mdo</td>
       </tr>
+      {% endfor %}
     
     </tbody>
   </table>

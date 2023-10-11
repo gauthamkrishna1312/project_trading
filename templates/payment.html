@@ -22,23 +22,34 @@ PAYMENT
     </div>
     
     <div class="container mt-5">
-        <form>
+        <form method='POST'>
+            {% csrf_token %}
+            <div class="mb-3">
+                <h4 class="text-white"> {{ plan.plan_name }} </h4>
+            </div>
             <div class="mb-3">
                 <label for="formGroupExampleInput" class="form-label text-white">NAME</label>
-                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter your name">
+                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter your name" name="transaction_name">
             </div>
             <div class="mb-3">
                 <label for="formGroupExampleInput2" class="form-label text-white">TRANSACTION ID</label>
-                <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Enter transaction ID">
+                <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Enter transaction ID" name="transaction_id">
             </div>
             <div class="mb-3">
                 <label for="formGroupExampleInput3" class="form-label text-white">AMOUNT</label>
-                <input type="number" class="form-control" id="formGroupExampleInput3" placeholder="Enter amount">
+                <input type="number" class="form-control" id="formGroupExampleInput3" placeholder="Enter amount" name="amount">
             </div>
             <div class="col-12 text-center">
                 <button type="submit" class="btn btn-primary">SUBMIT</button>
             </div>
         </form>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
     
 {% endblock %}
