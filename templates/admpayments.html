@@ -8,8 +8,8 @@ ADMIN PAYMENTS
 <div class="m-5">
 <h1> PAYMENTS </h1>
 <br>
-<table class="table">
-    <thead>
+<table class="table table-dark table-striped">
+  <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">USERNAME</th>
@@ -28,8 +28,7 @@ ADMIN PAYMENTS
         <td>{{ payment.transaction_name }}</td>
         <td>{{ payment.user_plan.plan.plan_name }}</td>
         <td>{{ payment.user_plan.invested_amount }}</td>
-        <td>{{ payment.user_plan.plan_status }}</td
-        <td>@mdo</td>
+        <td>{{ payment.user_plan.plan_status }}</td>
       </tr>
       {% endfor %}
     

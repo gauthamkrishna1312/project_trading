@@ -9,8 +9,8 @@ class Plans(models.Model):
     plan_price = models.CharField(max_length=100)
     plan_min_percentage = models.CharField(max_length=100)
     plan_max_percentage = models.CharField(max_length=100)
-    plan_max_profit = models.CharField(max_length=100)
     plan_min_profit = models.CharField(max_length=100)
+    plan_max_profit = models.CharField(max_length=100)
 
 class Account_details(models.Model):
 

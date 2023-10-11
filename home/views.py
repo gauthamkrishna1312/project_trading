@@ -196,10 +196,34 @@ class Admaddplan_view(View):
     def get(self,request):
         return render(request, 'admaddplan.html')
     
+    def post(self, request):
+
+        plan_name = request.POST["plan_name"]
+        plan_price = request.POST["plan_price"]
+        plan_min_percentage = request.POST["plan_min_percentage"]
+        plan_max_percentage = request.POST["plan_max_percentage"]
+        plan_min_profit = request.POST["plan_min_profit"]
+        plan_max_profit = request.POST["plan_max_profit"]
+
+        plan = models.Plans()
+        plan.plan_name = plan_name
+        plan.plan_price = plan_price
+        plan.plan_min_percentage = plan_min_percentage
+        plan.plan_max_percentage = plan_max_percentage
+        plan.plan_min_profit = plan_min_profit
+        plan.plan_max_profit = plan_max_profit
+        plan.save()
+
+    
 class Admeditplan_view(View):
     
     def get(self,request):
-        return render(request, 'admeditplan.html')
+
+        context = {
+            "plans": models.Plans.objects.all()
+        }
+
+        return render(request, 'admeditplan.html', context=context)
     
 class Admaddprofit_view(View):
     
