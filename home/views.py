@@ -56,6 +56,11 @@ class Payment_view(View):
 
     def get(self,request):
         return render(request, 'payment.html')
+    
+class Profile_view(View):
+
+    def get(self,request):
+        return render(request, 'profile.html')
 
 class History_view(View):
 
@@ -92,6 +97,16 @@ class Admwithdraw_view(View):
     def get(self,request):
         return render(request, 'admwithdraw.html')
 
+class Admaddplan_view(View):
+
+    def get(self,request):
+        return render(request, 'admaddplan.html')
+    
+class Admeditplan_view(View):
+
+    def get(self,request):
+        return render(request, 'admeditplan.html')
+    
 class Admaddprofit_view(View):
 
     def get(self,request):

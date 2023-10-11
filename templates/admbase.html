@@ -36,17 +36,6 @@
                             DASHBOARD
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          REGISTRATIONS
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                          <!-- Dropdown items go here -->
-                          <a class="dropdown-item" href="{% url 'admindex' %}">Option 1</a>
-                          <a class="dropdown-item" href="{% url 'admindex' %}">Option 2</a>
-                          <!-- Add more dropdown items as needed -->
-                        </div>
-                      </li>
                       
                       <li class="nav-item">
                           <a class="nav-link p-4" href="{% url 'admreg' %}">
@@ -73,6 +62,16 @@
                         <a class="nav-link p-4" href="{% url 'admaddprofit' %}">
                             ADD PROFIT
 
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admaddplan' %}">
+                            ADD PLAN
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link p-4" href="{% url 'admeditplan' %}">
+                            EDIT PLAN 
                         </a>
                     </li>
                     <li class="nav-item">
