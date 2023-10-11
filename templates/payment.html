@@ -8,10 +8,10 @@ PAYMENT
 
 {% load static %}
 
-<div class="m-5">
-    <div class="container mt-5">
+<div class="row">
+    <div class="col-md-4">
         <div class="card" style="width: 18rem; margin: 0 auto;">
-            <img src="{% static "/img/pay.jpg" %}" class="card-img-top" alt="...">
+            <img src="{% static '/img/pay.jpg' %}" class="card-img-top" alt="...">
             <div class="card-body">
                 <p class="card-text fw-light text-center">0x2A56BDeF1C09Dc8d0bF1f157cbd271c79ee3723b</p>
                 <h4 class="text-center fw-bold">WARNING</h4>
@@ -21,8 +21,8 @@ PAYMENT
         </div>
     </div>
     
-    <div class="container mt-5">
-        <form>
+    <div class="col-md">
+        <form style="width: 100%; max-width: 400px;" class="mx-auto mt-5">
             <div class="mb-3">
                 <label for="formGroupExampleInput" class="form-label text-white">NAME</label>
                 <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter your name">
@@ -36,7 +36,7 @@ PAYMENT
                 <input type="number" class="form-control" id="formGroupExampleInput3" placeholder="Enter amount">
             </div>
             <div class="col-12 text-center">
-                <button type="submit" class="btn btn-primary">SUBMIT</button>
+                <button type="submit" class="btn btn-secondary">SUBMIT</button>
             </div>
         </form>
     </div>
