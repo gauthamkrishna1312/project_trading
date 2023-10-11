@@ -1,0 +1,69 @@
+<div class="sidenav" style="border-right: 1px solid #444;">
+    <div class="sidenav-header py-3">
+        <h1>AI FX TRADING</h1>
+        <button class="toggle-btn" style="visibility: hidden;" id="sidebar-toggle-btn-1">&equiv;</button>
+    </div>
+    {% if user.is_authenticated %}
+    <ul style="height: 50%;" class="py-4">
+        <li class="list-item py-2">
+            <a href="{% url 'home' %}">
+                DASHBOARD
+            </a>
+        </li>
+          <li class="list-item py-2">
+              <a href="{% url 'yourplan' %}">
+                  YOUR PLAN
+              </a>
+          </li>
+          <li class="list-item py-2">
+              <a href="{% url 'newplan' %}">
+                  NEW PLAN
+              </a>
+          </li>
+          <li class="list-item py-2">
+              <a href="{% url 'profit' %}">
+                  PROFIT
+              </a>
+          </li>
+          <li class="list-item py-2">
+            <a href="{% url 'withdraw' %}">
+                WITHDRAW
+            </a>
+        </li>
+        <li class="list-item py-2">
+            <a href="{% url 'refer' %}">
+                REFER
+            </a>
+        </li>
+        <li class="list-item py-2">
+            <a href="{% url 'history' %}">
+                HISTORY
+            </a>
+        </li>
+        <li class="list-item py-2">
+            <a href="{% url 'contact' %}">
+                CONTACT
+            </a>
+        </li>
+          <!-- Add more menu items here -->
+      </ul>
+      {% endif %}
+    <ul>
+        {% if user.is_authenticated %}
+        <li class="list-item py-2">
+            <a href="{% url 'logout' %}">Logout</a>
+        </li>
+        <li class="list-item py-2">
+            <a href="{% url 'profile' %}">{{ user.username }}</a>
+        </li>
+        {% else %}
+        <li class="list-item py-2">
+            <a href="{% url 'signup' %}">Sign Up</a>
+        </li>
+        <li class="list-item py-2">
+            <a href="{% url 'login' %}">Log In</a>
+        </li>
+    </ul>
+    {% endif %}
+
+</div>
