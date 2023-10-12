@@ -7,9 +7,16 @@ ADMIN EDIT PLAN
 {% block content%}
 <div class="m-5">
 <h1> ADMIN EDIT PLAN</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <br>
     {% for plan in plans %}
-    <a href="#" class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
+    <a href="{% url 'edit_plan' plan_id=plan.id %}" class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
         <div class="card-body">
             <h4 class="card-title text-center"><strong>&gt;$ {{ plan.plan_price }}</strong></h4>
             <p class="card-text text-center" style="font-size: 1.2em;">({{ plan.plan_min_percentage }}% - {{ plan.plan_max_percentage }}%)</p>

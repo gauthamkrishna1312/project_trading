@@ -3,7 +3,6 @@
         <h1>AI FX TRADING</h1>
         <button class="toggle-btn" style="visibility: hidden;" id="sidebar-toggle-btn-1">&equiv;</button>
     </div>
-    {% if user.is_authenticated %}
     <ul style="height: 50%;" class="py-4">
         <li class="list-item py-2">
             <a href="{% url 'home' %}">
@@ -47,16 +46,13 @@
         </li>
           <!-- Add more menu items here -->
       </ul>
-      {% endif %}
     <ul>
-        {% if user.is_authenticated %}
         <li class="list-item py-2">
             <a href="{% url 'logout' %}">Logout</a>
         </li>
         <li class="list-item py-2">
             <a href="{% url 'profile' %}">{{ user.username }}</a>
         </li>
-        {% else %}
         <li class="list-item py-2">
             <a href="{% url 'signup' %}">Sign Up</a>
         </li>
@@ -64,6 +60,5 @@
             <a href="{% url 'login' %}">Log In</a>
         </li>
     </ul>
-    {% endif %}
 
 </div>
