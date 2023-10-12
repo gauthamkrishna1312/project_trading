@@ -5,4 +5,5 @@ from . import models
 admin.site.register(models.Plans)
 admin.site.register(models.User_plan)
 admin.site.register(models.Payment)
+admin.site.register(models.Withdraw)
 

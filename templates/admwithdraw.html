@@ -15,15 +15,25 @@ ADMIN WITHDRAW
         <th scope="col">USERNAME</th>
         <th scope="col">AMOUNT</th>
         <th scope="col">STATUS</th>
+        <th scope="col">ACTION</th>
       </tr>
     </thead>
     <tbody>
+      {% for withdraw in withdraws %}
+      {% if withdraw.withdraw_status == status %}
       <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
+        <th scope="row">{{ withdraw.id }}</th>
+        <td>{{ withdraw.user.username }}</td>
+        <td>{{ withdraw.withdraw_amount }}</td>
+        <td>{{ withdraw.withdraw_status }}</td>
+        <td>
+          {% if withdraw.withdraw_status == 'pending' %}
+          <a href="{% url 'adm_withdraw_action' action='done' id=withdraw.id %}" > DONE </a>
+          {% endif %}
+        </td>
       </tr>
+      {% endif %}
+      {% endfor %}
     
     </tbody>
   </table>

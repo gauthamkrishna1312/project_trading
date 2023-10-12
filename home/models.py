@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 class Plans(models.Model):
 
     plan_name = models.CharField(max_length=100)
-    plan_price = models.CharField(max_length=100)
+    plan_min_price = models.CharField(max_length=100)
+    plan_max_price = models.CharField(max_length=100)
     plan_min_percentage = models.CharField(max_length=100)
     plan_max_percentage = models.CharField(max_length=100)
 
@@ -20,6 +21,7 @@ class Account_details(models.Model):
 class User_plan(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    plan = models.ForeignKey(Plans, on_delete=models.CASCADE)
     invested_amount = models.CharField(max_length=100)
     plan_status = models.CharField(max_length=100)
     plan_profit = models.CharField(max_length=100)
@@ -31,6 +33,12 @@ class Payment(models.Model):
     transaction_id = models.CharField(max_length=100)
     transaction_amount = models.CharField(max_length=100)
     transaction_status = models.CharField(max_length=100)
+
+class Withdraw(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    withdraw_amount = models.CharField(max_length=100)
+    withdraw_status = models.CharField(max_length=100)
 
 class Refarral(models.Model):
 

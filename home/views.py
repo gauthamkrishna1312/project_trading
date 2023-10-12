@@ -12,23 +12,21 @@ from . import models
 class Index_view(View):
     
     def get(self, request):
+        print(models.Payment.objects.filter(user=request.user).exists())
+        if request.user.is_superuser:
+                return redirect("/moderator/index")
+        
+        user_plan = models.User_plan.objects.filter(user=request.user)
+        payment = models.Payment.objects.filter(user=request.user)
+        withdraw = models.Withdraw.objects.filter(user=request.user)
 
-        if models.User_plan.objects.filter(user=request.user).exists() == True:
-            user_plan = models.User_plan.objects.get(user=request.user)
-
-            if int(user_plan.invested_amount) <= 1000:
-                plan_name = "plan1"
-            if int(user_plan.invested_amount) > 1000 and int(user_plan.invested_amount) <= 5000:
-                plan_name = "plan2"
-
-            plan = models.Plans.objects.get(plan_name=plan_name)
-
-            context = {
-                "user_plan": user_plan,
-                "plan": plan,
-            }
-            return render(request, 'index.html', context=context)
-        return render(request, 'index.html')
+        context = {
+            "user_plans": user_plan,
+            "payments": payment,
+            "withdraws": withdraw,
+        }
+        
+        return render(request, 'index.html', context=context)
 
 class Signup_view(View):
 
@@ -49,6 +47,14 @@ class Signup_view(View):
         authenticate(username=uname, password=passw)
         login(request, user)
 
+        user_plan = models.User_plan()
+        user_plan.user = request.user
+        user_plan.invested_amount = "0"
+        user_plan.plan = models.Plans.objects.get(id=1)
+        user_plan.plan_status = "Inactive"
+        user_plan.plan_profit = "0"
+        user_plan.save()
+
         return render(request, "index.html")
 
 class Login_view(View):
@@ -60,7 +66,6 @@ class Login_view(View):
         
         uname = request.POST["login_uname"]
         passw = request.POST["login_passw"]
-        print(uname)
         user = authenticate(username=uname, password=passw)
         
         if user is not None:
@@ -75,7 +80,7 @@ class Logout_view(View):
 
         logout(request)
         messages.info(request, "logged out")
-        return redirect("home")
+        return redirect("/login")
 
 
 
@@ -142,6 +147,31 @@ class Withdraw_view(View):
     
     def get(self,request):
         return render(request, 'withdraw.html')
+    
+    def post(self, request):
+
+        withdraw_name = request.POST["withdraw_name"]
+        withdraw_amount = request.POST["withdraw_amount"]
+
+        if int(withdraw_amount) < 10:
+
+            messages.info(request, "minimum amount is 10")
+            return redirect("/withdraw")
+
+        user_plan = models.User_plan.objects.get(user=request.user)
+
+        if int(withdraw_amount) > int(user_plan.plan_profit):
+
+            messages.info(request, "insufficient fund")
+            return redirect("/withdraw")
+
+        withdraw = models.Withdraw()
+        withdraw.user = request.user
+        withdraw.withdraw_amount = withdraw_amount
+        withdraw.withdraw_status = "pending"
+        withdraw.save()
+
+        return redirect("/")
 
 class Refer_view(View):
     
@@ -179,7 +209,7 @@ class Payment_view(View):
             payment.transaction_name = transaction_name
             payment.transaction_id = transaction_id
             payment.transaction_amount = amount
-            payment.transaction_status = "processing"
+            payment.transaction_status = "pending"
             payment.save()
             messages.info(request, "payment is requested")
 
@@ -225,39 +255,80 @@ class Admpayments_view(View):
         if "id" in kwargs:
             
             payment_id = kwargs["id"]
+            action = kwargs["action"]
 
             payment = models.Payment.objects.get(id=payment_id)
-            if models.User_plan.objects.filter(user=payment.user).exists() == False:
+            if action == "approve":
+                if payment.transaction_status == "Approved":
+                    
+                    messages.info(request, "already approved")
+                    return redirect("/moderator/payments/approved")
+                
+                if models.User_plan.objects.filter(user=payment.user).exists() == True:
 
-                user_plan = models.User_plan()
-                user_plan.user = payment.user
-                user_plan.invested_amount = payment.transaction_amount
-                user_plan.plan_status = "Active"
-                user_plan.plan_profit = "0"
-                user_plan.save()
-            
-            if models.User_plan.objects.filter(user=payment.user).exists() == True:
+                    user_plan = models.User_plan.objects.get(user=payment.user)
+                    user_plan.invested_amount = str(int(user_plan.invested_amount) + int(payment.transaction_amount))
+                    plan = self.get_plan(user_plan.invested_amount)
+                    user_plan.plan = plan
+                    user_plan.plan_status = "Active"
+                    user_plan.save()
 
-                user_plan = models.User_plan.objects.get(user=payment.user)
-                user_plan.invested_amount = str(int(user_plan.invested_amount) + int(payment.transaction_amount))
-                user_plan.save()
+                payment.transaction_status = "approved"
+                payment.save()
 
-            payment.transaction_status = "Approved"
-            payment.save()
+                return redirect("/moderator/payments/approved")
 
-            return redirect("/moderator/payments/")
+            elif action == "reject":
+
+                payment.transaction_status = 'rejected'
+                payment.save()
+
+                return redirect("/moderator/payments/rejected")
 
         else:
+            status = kwargs["status"]
             context = {
-                "payments": models.Payment.objects.all()
+                "payments": models.Payment.objects.all(),
+                "status": status,
             }
 
-            return render(request, "admpayments.html", context=context) 
+            return render(request, "admpayments.html", context=context)
+        
+    def get_plan(self, amount: int):
+
+        plan_db = models.Plans.objects.all()
+        for plan in plan_db:
+            if int(amount) >= int(plan.plan_min_price) and int(amount) < int(plan.plan_max_price):
+                return plan
 
 class Admwithdraw_view(View):
     
-    def get(self,request):
-        return render(request, 'admwithdraw.html')
+    def get(self,request, **kwargs):
+
+        if "id" in kwargs:
+
+            withdraw_id = kwargs["id"]
+            action = kwargs["action"]
+
+            withdraw = models.Withdraw.objects.get(id=withdraw_id)
+
+            if action == "done":
+                
+                user_plan = models.User_plan.objects.get(user=withdraw.user)
+                user_plan.plan_profit = str(int(user_plan.plan_profit) - int(withdraw.withdraw_amount))
+                user_plan.save()
+                withdraw.withdraw_status = "done"
+                withdraw.save()
+
+                return redirect("/moderator/withdraw/done")
+
+        status = kwargs["status"]
+        context = {
+            "withdraws": models.Withdraw.objects.all(),
+            "status": status,
+        }
+
+        return render(request, 'admwithdraw.html', context=context)
 
 class Admaddplan_view(View):
     
