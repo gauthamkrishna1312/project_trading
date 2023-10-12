@@ -1,7 +1,32 @@
 <div class="sidenav" style="border-right: 1px solid #444;">
     <div class="sidenav-header py-3">
-        <h1>ADMIN AI FX TRADING</h1>
+        <h1 class="fw-bold">ADMIN AI FX</h1>
         <button class="toggle-btn" style="visibility: hidden;" id="sidebar-toggle-btn-1">&equiv;</button>
+        <div class="dropdown">
+            <button onclick="myFunction()" class="dropbtn"><i class="fa-solid fa-user"></i> {{ user.username }}</button>
+            <div id="myDropdown" class="dropdown-content">
+                <ul>
+                    {% if user.is_authenticated %}
+                    <li class="list-item py-2" >
+                        
+                        <a href="{% url 'profile' %}" class="text-dark"> <i class="fa-solid fa-user"></i> {{ user.username }}</a>
+                    </li>
+                    <li class="list-item py-2">
+                        <a href="{% url 'logout' %}" class="text-dark">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="list-item py-2">
+                        <a href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                    <li class="list-item py-2">
+                        <a href="{% url 'login' %}">Log In</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            
+            </div>
+          </div>
+        
     </div>
     <ul class="nav flex-column">
         <li class="nav-item">
