@@ -19,6 +19,7 @@ urlpatterns = [
     path('moderator/members/', login_required(views.Admreg_view.as_view()), name='adm_mambers'),
     path('moderator/activemembers/', login_required(views.Admregact_view.as_view()), name='adm_active_member'),
     path('moderator/payments/', login_required(views.Admpayments_view.as_view()), name='adm_payments'),
+    path('moderator/payments/approve/<int:id>', login_required(views.Admpayments_view.as_view()), name="adm_payments_approve"),
     path('moderator/withdraw/', login_required(views.Admwithdraw_view.as_view()), name='adm_withdraw'),
     path('moderator/addprofit/', login_required(views.Admaddprofit_view.as_view()), name='adm_add_profit'),
     path('moderator/addplan/', login_required(views.Admaddplan_view.as_view()), name='adm_add_plan'),

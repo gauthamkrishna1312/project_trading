@@ -16,6 +16,7 @@ ADMIN PAYMENTS
         <th scope="col">NAME</th>
         <th scope="col">AMOUNT</th>
         <th scope="col">STATUS</th>
+        <th scope="col">APPROVE</th>
         
       </tr>
     </thead>
@@ -27,6 +28,7 @@ ADMIN PAYMENTS
         <td>{{ payment.transaction_name }}</td>
         <td>{{ payment.transaction_amount }}</td>
         <td>{{ payment.transaction_status }}</td>
+        <td><a href="{% url 'adm_payments_approve' id=payment.id %}" > APPROVE </a></td>
       </tr>
       {% endfor %}
     

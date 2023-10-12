@@ -220,13 +220,39 @@ class Admregact_view(View):
 
 class Admpayments_view(View):
     
-    def get(self,request):
+    def get(self,request, **kwargs):
+        
+        if "id" in kwargs:
+            
+            payment_id = kwargs["id"]
 
-        context = {
-            "payments": models.Payment.objects.all()
-        }
+            payment = models.Payment.objects.get(id=payment_id)
+            if models.User_plan.objects.filter(user=payment.user).exists() == False:
 
-        return render(request, "admpayments.html", context=context) 
+                user_plan = models.User_plan()
+                user_plan.user = payment.user
+                user_plan.invested_amount = payment.transaction_amount
+                user_plan.plan_status = "Active"
+                user_plan.plan_profit = "0"
+                user_plan.save()
+            
+            if models.User_plan.objects.filter(user=payment.user).exists() == True:
+
+                user_plan = models.User_plan.objects.get(user=payment.user)
+                user_plan.invested_amount = str(int(user_plan.invested_amount) + int(payment.transaction_amount))
+                user_plan.save()
+
+            payment.transaction_status = "Approved"
+            payment.save()
+
+            return redirect("/moderator/payments/")
+
+        else:
+            context = {
+                "payments": models.Payment.objects.all()
+            }
+
+            return render(request, "admpayments.html", context=context) 
 
 class Admwithdraw_view(View):
     
