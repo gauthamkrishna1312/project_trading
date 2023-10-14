@@ -1,10 +1,21 @@
 {% extends 'mod/admbase.html' %}
 
 {% block title%}
+{% if edit %}
+ADMIN EDIT PLAN
+{% else %}
 ADMIN ADD PLAN
+{% endif %}
 {% endblock %}
 
 {% block content%}
+
+<ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul>
+
 <div class="m-5">
 {% if edit %}
 <h1> EDIT PLAN</h1>

@@ -162,14 +162,14 @@ class Withdraw_view(View):
         account_no = request.POST.get("account_no", None)
         ifsc_code = request.POST.get("ifsc_code", None)
 
-        if int(withdraw_amount) < 10:
+        if float(withdraw_amount) < 10:
 
             messages.info(request, "minimum amount is 10")
             return redirect("/withdraw")
 
         user_plan = models.User_plan.objects.get(user=request.user)
 
-        if int(withdraw_amount) > int(user_plan.user_profit):
+        if float(withdraw_amount) > float(user_plan.user_profit):
 
             messages.error(request, "insufficient fund")
             return redirect("/withdraw")
@@ -204,10 +204,10 @@ class Payment_view(View):
         amount = request.POST["amount"]
 
         
-        if int(amount) < 100:
+        if float(amount) < 100:
             messages.info(request, "minimum amount is 100")
             return render(request, "payment.html")
-        if float(str(int(amount)/50).split(".")[1]) > 0:
+        if float(str(float(amount)/50).split(".")[1]) > 0:
             messages.info(request, "only multiples of 50")
             return render(request, "payment.html")
         else:
@@ -236,6 +236,7 @@ class History_view(View):
         payments = models.Payment.objects.filter(user=request.user)
         withdraw = models.Withdraw.objects.filter(user=request.user)
         addprofit = models.Addprofit.objects.filter(user=request.user)
+        ids = range(1,)
         context = {
             "payments": payments,
             "withdraws": withdraw,
@@ -255,14 +256,15 @@ class ModDashboard_view(View):
 
 class ModMembers_view(View):
     
-    def get(self, request,**kwargs):
+    def get(self, request, **kwargs):
 
         if "status" in kwargs:
+            
             context = {
                 "members": models.User_plan.objects.filter(user_status=kwargs["status"]),
             }
 
-            return render(request, 'mod/ .html', context=context)
+            return render(request, 'mod/membersactive.html', context=context)
         
         context = {
             "members": User.objects.all(),
@@ -302,7 +304,7 @@ class ModPayments_view(View):
                 if models.User_plan.objects.filter(user=payment.user).exists() == True:
 
                     user_plan = models.User_plan.objects.get(user=payment.user)
-                    user_plan.invested_amount = str(int(user_plan.invested_amount) + int(payment.transaction_amount))
+                    user_plan.invested_amount = str(float(user_plan.invested_amount) + float(payment.transaction_amount))
                     plan = self.get_plan(user_plan.invested_amount)
                     user_plan.plan = plan
                     user_plan.user_status = "Active"
@@ -311,6 +313,7 @@ class ModPayments_view(View):
                 payment.transaction_status = "approved"
                 payment.save()
 
+                messages.success(request, "payment approved")
                 return redirect("/moderator/payments/approved")
 
             elif action == "reject":
@@ -318,13 +321,13 @@ class ModPayments_view(View):
                 payment.transaction_status = 'rejected'
                 payment.save()
 
+                messages.success(request, "payment rejected")
                 return redirect("/moderator/payments/rejected")
 
         else:
             status = kwargs["status"]
             context = {
-                "payments": models.Payment.objects.all(),
-                "status": status,
+                "payments": models.Payment.objects.filter(transaction_status=status),
             }
 
             return render(request, "mod/payments.html", context=context)
@@ -333,7 +336,7 @@ class ModPayments_view(View):
 
         plan_db = models.Plans.objects.all()
         for plan in plan_db:
-            if int(amount) >= int(plan.plan_min_price) and int(amount) < int(plan.plan_max_price):
+            if float(amount) >= float(plan.plan_min_price) and float(amount) < float(plan.plan_max_price):
                 return plan
 
 class ModWithdraw_view(View):
@@ -350,11 +353,12 @@ class ModWithdraw_view(View):
             if action == "done":
                 
                 user_plan = models.User_plan.objects.get(user=withdraw.user)
-                user_plan.user_profit = str(int(user_plan.user_profit) - int(withdraw.withdraw_amount))
+                user_plan.user_profit = str(float(user_plan.user_profit) - float(withdraw.withdraw_amount))
                 user_plan.save()
                 withdraw.withdraw_status = "done"
                 withdraw.save()
 
+                messages.success(request, "withdraw success")
                 return redirect("/moderator/withdraw/done")
             
             elif action == "rejected":
@@ -362,6 +366,7 @@ class ModWithdraw_view(View):
                 withdraw.withdraw_status = "rejected"
                 withdraw.save()
 
+                messages.success(request, "withdraw rejected")
                 return redirect("/moderator/withdraw/rejected")
 
         status = kwargs["status"]
@@ -405,7 +410,7 @@ class ModAddPlan_view(View):
 
         plan_db = models.Plans.objects.all()
         for plan in plan_db:
-            if int(amount) >= int(plan.plan_min_price) and int(amount) < int(plan.plan_max_price):
+            if float(amount) >= float(plan.plan_min_price) and float(amount) < float(plan.plan_max_price):
                 return plan
             else:
                 return None
@@ -465,7 +470,7 @@ class ModAddProfit_view(View):
         user_plans = models.User_plan.objects.filter(plan=plan)
         for user_plan in user_plans:
 
-            profit = int(days)*(float(user_plan.invested_amount)*(float(percentage)/100))
+            profit = float(days)*(float(user_plan.invested_amount)*(float(percentage)/100))
             user_plan.user_profit = float(user_plan.user_profit) + profit
             user_plan.save()
 
@@ -476,4 +481,5 @@ class ModAddProfit_view(View):
             addprofit.percentage = percentage
             addprofit.save()
 
+        messages.success(request, "profit added")
         return redirect("/moderator/addprofit")

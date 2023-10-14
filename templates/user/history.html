@@ -23,7 +23,7 @@ ADMIN WITHDRAW
       {% if action == 'payments' %}
       {% for payment in payments %}
       <tr>
-        <th scope="row">{{ payment.id }}</th>
+        <th scope="row">{{ forloop.counter }}</th>
         <td>{{ payment.transaction_amount }}</td>
         <td>Otto</td>
         <td>{{ payment.transaction_status }}</td>
@@ -33,7 +33,7 @@ ADMIN WITHDRAW
       {% elif action == 'withdraws' %}
       {% for withdraw in withdraws %}
       <tr>
-        <th scope="row">{{ withdraw.id }}</th>
+        <th scope="row">{{ forloop.counter }}</th>
         <td>{{ withdraw.withdraw_amount }}</td>
         <td>Otto</td>
         <td>{{ withdraw.withdraw_status }}</td>
@@ -43,7 +43,7 @@ ADMIN WITHDRAW
       {% elif action == 'profit' %}
       {% for addprofit in addprofits %}
       <tr>
-        <th scope="row">{{ addprofit.id }}</th>
+        <th scope="row">{{ forloop.counter }}</th>
         <td>{{ addprofit.profit }}</td>
         <td>Otto</td>
         <td></td>
