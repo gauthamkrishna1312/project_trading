@@ -10,10 +10,54 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title> {% block title %}{% endblock %}</title>
+    <style>
+      header div{
+        display: block;
+      }
+.sidenav{
+  z-index: 1;
+}
+      .sidenav .dropdown .dropbtn{
+
+        background-color: #2d4059;
+      }
+      .dropdown{
+        width: 100%;
+        height: 100%;
+      }
+      .dropdown .dropbtn { 
+        width: 100%;
+        height: 100%;
+      }
+      .dropdown-content{
+        width: 100%;
+        background-color: #eeeeee;
+      }
+      .dropdown-content a:hover{
+        background-color: #ff5722;
+      }
+      .sidenav a{
+        padding: 0.25em 0;
+      }
+      .sidenav a:hover {
+background-color: #ff5722;
+}
+
+      @media screen and (max-width: 768px) {
+        
+        header div{
+          display: none;
+        }
+      }
+    </style>
 </head>
 <body>
    {% include 'user/navbar.html' %}
-    <div class="main-content container" style="background-color: #333; color: #fff; min-height: 100vh;">
+   <header class=" d-flex align-items-center" style="background-color: #2d4059; margin-left: 0; height: 88px;">
+   <div style="width: 260px;"></div>
+    <h1 class="fw-bold text-light" >AI FX</h1>
+  </header>
+    <div class="main-content container" style="background-color: #222831; color: #fff; min-height: 100vh;">
         <button class="toggle-btn" id="sidebar-toggle-btn-2"><i class="fa-solid fa-bars"></i></button>
         {% block content %}{% endblock %}
 
