@@ -22,17 +22,20 @@ ADMIN ACTIVE USERS
       </tr>
     </thead>
     <tbody>
+      {% for id in ids %}
+      {% for user_plan in user_plans %}
       <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
+        <th scope="row">{{ id }}</th>
+        <td>{{ user_plan.user.username }}</td>
+        <td>{{ user_plan.plan.plan_name }}</td>
+        <td>{{ user_plan.invested_amount }}</td>
         <td>@mdo</td>
-        <td>@mdo</td>
-        <td>@mdo</td>
+        <td>{{ user_plan.user_profit }}</td>
         <td>@mdo</td>
         <a> <td> view </td></a>
       </tr>
-      
+      {% endfor %}
+      {% endfor %}
     </tbody>
   </table>
 {% endblock %}

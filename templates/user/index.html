@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'user/base.html' %}
 
 {% block title%}
 Home
@@ -6,8 +6,14 @@ Home
 
 {% block content%}
 
+<ul class="messages">
+{% for message in messages %}
+<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+{% endfor %}
+</ul>
+
 <br>
-{% if user_plan %}
+{% if user_plans %}
 {% for user_plan in user_plans %}
 {% if user_plan.invested_amount != "0" %}
 <div class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
@@ -18,8 +24,8 @@ Home
         <br>
         <!--<p class="card-text text-center" style="font-size: 1.2em;">AMOUNT - {{ user_plan.invested_amount }}</p>-->
         <p class="card-text text-center" style="font-size: 1.2em;">TOTAL DAYS - </p>
-        <p class="card-text text-center" style="font-size: 1.2em;">Total Profit - {{ user_plan.plan_profit }}</p>
-        <p class="card-text text-center" style="font-size: 1.2em;">Status - {{ user_plan.plan_status }}</p>
+        <p class="card-text text-center" style="font-size: 1.2em;">Total Profit - {{ user_plan.user_profit }}</p>
+        <p class="card-text text-center" style="font-size: 1.2em;">Status - {{ user_plan.user_status }}</p>
         
     </div>
 </div>
@@ -32,7 +38,7 @@ Home
 {% if payment.transaction_status != "approved" %}
 <div class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
     <div class="card-body">
-        <p class="card-text text-center" style="font-size: 1.2em;">{{ payment.transaction_name }}</p>
+        <p class="card-text text-center" style="font-size: 1.2em;">payment</p>
         <br>
         <p class="card-text text-center" style="font-size: 1.2em;">AMOUNT - {{ payment.transaction_amount }}</p>
         <p class="card-text text-center" style="font-size: 1.2em;">Status - {{ payment.transaction_status }}</p>

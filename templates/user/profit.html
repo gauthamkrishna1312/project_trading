@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'user/base.html' %}
 
 {% block title%}
 PROFIT
@@ -10,18 +10,20 @@ PROFIT
 
 <div class="m-5">
 
+        {% if user_plan %}
         <div class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
             <div class="card-body">
-                <h4 class="card-title text-center"><strong>&gt;$ 100</strong></h4>
-                <p class="card-text text-center" style="font-size: 1.2em;">(0.5% - 1.5%)</p>
-                <p class="card-text text-center" style="font-size: 1.2em;">Day - ($0.5 - $1.5)</p>
+                <h4 class="card-title text-center"><strong>{{ user_plan.plan.plan_name }}</strong></h4>
+                <h4 class="card-title text-center"><strong>$ {{ user_plan.invested_amount }}</strong></h4>
+                <p class="card-text text-center" style="font-size: 1.2em;">({{ user_plan.plan.plan_min_percentage }}% - {{ user_plan.plan.plan_max_percentage }}%)</p>
                 <br>
-                <p class="card-text text-center" style="font-size: 1.2em;">AMOUNT - </p>
+                <p class="card-text text-center" style="font-size: 1.2em;">AMOUNT - $ {{ user_plan.invested_amount }}</p>
                 <p class="card-text text-center" style="font-size: 1.2em;">TOTAL DAYS - </p>
-                <p class="card-text text-center" style="font-size: 1.2em;">Total Profit - </p>
+                <p class="card-text text-center" style="font-size: 1.2em;">Total Profit - $ {{ user_plan.user_profit }}</p>
                 
             </div>
         </div>
+        {% endif %}
 
         
                 <div class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #007BFF; border-radius: 10px; transition: transform 0.2s; background-color: #343a40;">
@@ -38,6 +40,6 @@ PROFIT
                 </div>
                 <br>
 
-                <h3 class="text-white"> TOTAL - </h3>
-                <h3 class="text-white"> BALANCE - </h3>
+                {% comment %} <h3 class="text-white"> TOTAL - </h3> {% endcomment %}
+                <h3 class="text-white"> BALANCE - $ {{ user_plan.user_profit }}</h3>
 {% endblock %}

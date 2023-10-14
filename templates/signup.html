@@ -1,20 +1,28 @@
-{% extends 'base.html' %}
+{% extends 'user/base.html' %}
 
 {% block title%}
 Sign Up
 {% endblock %}
 
 {% block content%}
+
+<ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul>
+
 <div class=" mx-auto" style="margin-top: 9%; width: 100%; max-width: 500px;">
     <h1 class="h1">Sign Up</h1>
 
     <form method="POST">
         {% csrf_token %}
-        <input type="text" class="form-control my-3" placeholder="First name" aria-label="First name" name="fname">
-        <input type="text" class="form-control my-3" placeholder="Last name" aria-label="Last name" name="lname">
-        <input type="email" class="form-control my-3" placeholder="Email" aria-label="Email" name="signup_email">
-        <input type="username" class="form-control my-3" placeholder="username" aria-label="username" name="signup_uname">
-        <input type="password" class="form-control my-3" placeholder="password" aria-label="password" name="signup_passw">
+        <input type="text" class="form-control my-3" placeholder="First name" aria-label="First name" value="{{ fname | default:'' }}" name="fname">
+        <input type="text" class="form-control my-3" placeholder="Last name" aria-label="Last name" value="{{ lname | default:'' }}" name="lname">
+        <input type="email" class="form-control my-3" placeholder="Email" aria-label="Email" value="{{ email | default:'' }}" name="signup_email">
+        <input type="username" class="form-control my-3" placeholder="username" aria-label="username" value="{{ uname | default:'' }}" name="signup_uname">
+        <input type="password" class="form-control my-3" placeholder="password" aria-label="password" name="signup_passw1">
+        <input type="password" class="form-control my-3" placeholder="confirm password" aria-label="confirm password" name="signup_passw2">
         <button type="submit" class="btn btn-secondary">Sign Up</button>
         
     </form>

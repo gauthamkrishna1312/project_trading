@@ -1,32 +1,39 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.views import View
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.core.exceptions import ValidationError
 
 from . import models
 
-# Create your views here.
+
 class Index_view(View):
+
+    def get(self, request):
+
+        if request.user.is_superuser:
+                return redirect("/moderator/dashboard/")
+        
+        return redirect("/dashboard")
+
+class Dashboard_view(View):
     
     def get(self, request):
-        print(models.Payment.objects.filter(user=request.user).exists())
-        if request.user.is_superuser:
-                return redirect("/moderator/index")
         
-        user_plan = models.User_plan.objects.filter(user=request.user)
-        payment = models.Payment.objects.filter(user=request.user)
-        withdraw = models.Withdraw.objects.filter(user=request.user)
+        user_plans = models.User_plan.objects.filter(user=request.user)
+        payments = models.Payment.objects.filter(user=request.user)
+        withdraws = models.Withdraw.objects.filter(user=request.user)
 
         context = {
-            "user_plans": user_plan,
-            "payments": payment,
-            "withdraws": withdraw,
+            "user_plans": user_plans,
+            "payments": payments,
+            "withdraws": withdraws,
         }
         
-        return render(request, 'index.html', context=context)
+        return render(request, 'user/index.html', context=context)
 
 class Signup_view(View):
 
@@ -39,23 +46,43 @@ class Signup_view(View):
         lname = request.POST["lname"]
         email = request.POST["signup_email"]
         uname = request.POST["signup_uname"]
-        passw = request.POST["signup_passw"]
+        passw1 = request.POST["signup_passw1"]
+        passw2 = request.POST["signup_passw2"]
+
+        temp_context = {
+                "fname": fname,
+                "lname": lname,
+                "email": email,
+                "uname": uname
+            }
+        
+        try:
+            validate_password(passw1)
+        except ValidationError:
+            messages.error(request, "password validation error")
+            return render(request, "signup.html", context=temp_context)
+
+        if passw1 != passw2:
+
+            messages.error(request, "password didnt match")
+            return render(request, "signup.html", context=temp_context)
 
         user = User(first_name=fname, last_name=lname,username=uname, email=email)
-        user.set_password(passw)
+        user.set_password(passw1)
         user.save()
-        authenticate(username=uname, password=passw)
+        authenticate(username=uname, password=passw1)
         login(request, user)
 
         user_plan = models.User_plan()
         user_plan.user = request.user
         user_plan.invested_amount = "0"
         user_plan.plan = models.Plans.objects.get(id=1)
-        user_plan.plan_status = "Inactive"
-        user_plan.plan_profit = "0"
+        user_plan.user_status = "Inactive"
+        user_plan.user_profit = "0"
         user_plan.save()
 
-        return render(request, "index.html")
+        messages.success(request, "Signup Successful")
+        return redirect("/dashboard")
 
 class Login_view(View):
 
@@ -71,8 +98,11 @@ class Login_view(View):
         if user is not None:
             login(request, user)
             if request.user.is_superuser:
-                return redirect("/moderator/index")
-            return render(request, "index.html")
+                return redirect("/moderator/dashboard/")
+            return redirect(f"/dashboard")
+        else:
+            messages.error(request, "user name or password is invalid")
+            return redirect("/login")
         
 class Logout_view(View):
     
@@ -87,71 +117,50 @@ class Logout_view(View):
 class Contact_view(View):
     
     def get(self, request):
-        return render(request, 'contact.html')
+        return render(request, 'user/contact.html')
 
-class Yourplan_view(View):
+# class Yourplan_view(View):
     
-    def get(self, request):
+#     def get(self, request):
 
-        user_plan = models.User_plan.objects.filter(user=request.user)
-        context = {
-            "user_plan": user_plan,
-        }
-        return render(request, 'yourplan.html', context=context)
+#         user_plan = models.User_plan.objects.filter(user=request.user)
+#         context = {
+#             "user_plan": user_plan,
+#         }
+#         return render(request, 'yourplan.html', context=context)
 
-class Newplan_view(View):
+class Plans_view(View):
     
     def get(self, request):
 
         context = {
             "plans": models.Plans.objects.all(),
         }
-        return render(request, 'newplan.html', context=context)
-    
-class Editplan_view(View):
-
-    def get(self, request, plan_id):
-
-        context = {
-            "plan": models.Plans.objects.get(id=plan_id)
-        }
-        return render(request, "admaddplan.html", context=context)
-    
-    def post(self, request, plan_id):
-        
-        plan_name = request.POST["plan_name"]
-        plan_price = request.POST["plan_price"]
-        plan_min_percentage = request.POST["plan_min_percentage"]
-        plan_max_percentage = request.POST["plan_max_percentage"]
-        plan_min_profit = request.POST["plan_min_profit"]
-        plan_max_profit = request.POST["plan_max_profit"]
-
-        plan = models.Plans.objects.get(id=plan_id)
-        plan.plan_name = plan_name
-        plan.plan_price = plan_price
-        plan.plan_min_percentage = plan_min_percentage
-        plan.plan_max_percentage = plan_max_percentage
-        plan.plan_min_profit = plan_min_profit
-        plan.plan_max_profit = plan_max_profit
-        plan.save()
-
-        messages.success(request, "Plan changed")
-        return redirect("adm_edit_plan")
+        return render(request, 'user/plans.html', context=context)
 
 class Profit_view(View):
     
     def get(self,request):
-        return render(request, 'profit.html')
+
+        user_plan = models.User_plan.objects.get(user=request.user)
+        context = {
+            "user_plan": user_plan,
+        }
+
+        return render(request, 'user/profit.html', context=context)
 
 class Withdraw_view(View):
     
     def get(self,request):
-        return render(request, 'withdraw.html')
+        return render(request, 'user/withdraw.html')
     
     def post(self, request):
 
         withdraw_name = request.POST["withdraw_name"]
         withdraw_amount = request.POST["withdraw_amount"]
+        wallet_id = request.POST.get("wallet_id", None)
+        account_no = request.POST.get("account_no", None)
+        ifsc_code = request.POST.get("ifsc_code", None)
 
         if int(withdraw_amount) < 10:
 
@@ -160,34 +169,33 @@ class Withdraw_view(View):
 
         user_plan = models.User_plan.objects.get(user=request.user)
 
-        if int(withdraw_amount) > int(user_plan.plan_profit):
+        if int(withdraw_amount) > int(user_plan.user_profit):
 
-            messages.info(request, "insufficient fund")
+            messages.error(request, "insufficient fund")
             return redirect("/withdraw")
 
         withdraw = models.Withdraw()
         withdraw.user = request.user
         withdraw.withdraw_amount = withdraw_amount
+        withdraw.account_name = withdraw_name
+        withdraw.account_no = account_no
+        withdraw.wallet_id = wallet_id
+        withdraw.ifsc_code = ifsc_code
         withdraw.withdraw_status = "pending"
         withdraw.save()
 
-        return redirect("/")
+        return redirect("/dashboard")
 
 class Refer_view(View):
     
     def get(self,request):
-        return render(request, 'refer.html')
+        return render(request, 'user/refer.html')
 
 class Payment_view(View):
     
     def get(self,request):
 
-
-        # if models.User_plan.objects.filter(user=request.user).exists() == True:
-            # messages.info(request, "plan already exists")
-            # return redirect("yourplan")
-
-        return render(request, 'payment.html')
+        return render(request, 'user/payment.html')
     
     def post(self, request):
         
@@ -211,44 +219,71 @@ class Payment_view(View):
             payment.transaction_amount = amount
             payment.transaction_status = "pending"
             payment.save()
-            messages.info(request, "payment is requested")
 
-            return redirect("home")
+            messages.info(request, "payment is requested")
+            return redirect("/dashboard")
     
 class Profile_view(View):
     
     def get(self,request):
-        return render(request, 'profile.html')
+        return render(request, 'user/profile.html')
 
 class History_view(View):
     
-    def get(self,request):
-        return render(request, 'history.html')
+    def get(self,request, **kwargs):
+
+        action = kwargs["action"]
+        payments = models.Payment.objects.filter(user=request.user)
+        withdraw = models.Withdraw.objects.filter(user=request.user)
+        addprofit = models.Addprofit.objects.filter(user=request.user)
+        context = {
+            "payments": payments,
+            "withdraws": withdraw,
+            "addprofits": addprofit,
+            "action": action,
+        }
+
+        return render(request, 'user/history.html', context=context)
 
 
 
 
-class Admindex_view(View):
+class ModDashboard_view(View):
     
     def get(self,request):
-        return render(request, 'admindex.html')
+        return render(request, 'mod/index.html')
 
-class Admreg_view(View):
+class ModMembers_view(View):
     
-    def get(self,request):
+    def get(self, request,**kwargs):
 
+        if "status" in kwargs:
+            context = {
+                "members": models.User_plan.objects.filter(user_status=kwargs["status"]),
+            }
+
+            return render(request, 'mod/ .html', context=context)
+        
         context = {
             "members": User.objects.all(),
         }
 
-        return render(request, 'admreg.html', context=context)
+        return render(request, 'mod/members.html', context=context)
 
-class Admregact_view(View):
+# class Admregact_view(View):
     
-    def get(self,request):
-        return render(request, 'admregact.html')
+#     def get(self,request):
 
-class Admpayments_view(View):
+#         user_plans = models.User_plan.objects.filter(user_status="Active")
+#         ids = range(1,len(user_plans)+1)
+#         context = {
+#             "user_plans": user_plans,
+#             "ids": ids,
+#         }
+
+#         return render(request, 'mod/admregact.html', context=context)
+
+class ModPayments_view(View):
     
     def get(self,request, **kwargs):
         
@@ -261,7 +296,7 @@ class Admpayments_view(View):
             if action == "approve":
                 if payment.transaction_status == "Approved":
                     
-                    messages.info(request, "already approved")
+                    messages.error(request, "already approved")
                     return redirect("/moderator/payments/approved")
                 
                 if models.User_plan.objects.filter(user=payment.user).exists() == True:
@@ -270,7 +305,7 @@ class Admpayments_view(View):
                     user_plan.invested_amount = str(int(user_plan.invested_amount) + int(payment.transaction_amount))
                     plan = self.get_plan(user_plan.invested_amount)
                     user_plan.plan = plan
-                    user_plan.plan_status = "Active"
+                    user_plan.user_status = "Active"
                     user_plan.save()
 
                 payment.transaction_status = "approved"
@@ -292,16 +327,16 @@ class Admpayments_view(View):
                 "status": status,
             }
 
-            return render(request, "admpayments.html", context=context)
+            return render(request, "mod/payments.html", context=context)
         
-    def get_plan(self, amount: int):
+    def get_plan(self, amount):
 
         plan_db = models.Plans.objects.all()
         for plan in plan_db:
             if int(amount) >= int(plan.plan_min_price) and int(amount) < int(plan.plan_max_price):
                 return plan
 
-class Admwithdraw_view(View):
+class ModWithdraw_view(View):
     
     def get(self,request, **kwargs):
 
@@ -315,12 +350,19 @@ class Admwithdraw_view(View):
             if action == "done":
                 
                 user_plan = models.User_plan.objects.get(user=withdraw.user)
-                user_plan.plan_profit = str(int(user_plan.plan_profit) - int(withdraw.withdraw_amount))
+                user_plan.user_profit = str(int(user_plan.user_profit) - int(withdraw.withdraw_amount))
                 user_plan.save()
                 withdraw.withdraw_status = "done"
                 withdraw.save()
 
                 return redirect("/moderator/withdraw/done")
+            
+            elif action == "rejected":
+
+                withdraw.withdraw_status = "rejected"
+                withdraw.save()
+
+                return redirect("/moderator/withdraw/rejected")
 
         status = kwargs["status"]
         context = {
@@ -328,36 +370,48 @@ class Admwithdraw_view(View):
             "status": status,
         }
 
-        return render(request, 'admwithdraw.html', context=context)
+        return render(request, 'mod/withdraw.html', context=context)
 
-class Admaddplan_view(View):
+class ModAddPlan_view(View):
     
     def get(self,request):
-        return render(request, 'admaddplan.html')
+        return render(request, 'mod/addplan.html')
     
     def post(self, request):
 
         plan_name = request.POST["plan_name"]
-        plan_price = request.POST["plan_price"]
         plan_min_percentage = request.POST["plan_min_percentage"]
         plan_max_percentage = request.POST["plan_max_percentage"]
-        plan_min_profit = request.POST["plan_min_profit"]
-        plan_max_profit = request.POST["plan_max_profit"]
+        plan_min_price = request.POST["plan_min_price"]
+        plan_max_price = request.POST["plan_max_price"]
+
+        if self.get_plan(plan_min_price) is not None:
+
+            messages.error(request, "plan alredy exists")
+            return redirect("/moderator/plans")
 
         plan = models.Plans()
         plan.plan_name = plan_name
-        plan.plan_price = plan_price
         plan.plan_min_percentage = plan_min_percentage
         plan.plan_max_percentage = plan_max_percentage
-        plan.plan_min_profit = plan_min_profit
-        plan.plan_max_profit = plan_max_profit
+        plan.plan_min_price = plan_min_price
+        plan.plan_max_price = plan_max_price
         plan.save()
 
         messages.success(request, "Plan created")
-        return redirect("adm_edit_plan")
+        return redirect("/moderator/plans")
+    
+    def get_plan(self, amount):
+
+        plan_db = models.Plans.objects.all()
+        for plan in plan_db:
+            if int(amount) >= int(plan.plan_min_price) and int(amount) < int(plan.plan_max_price):
+                return plan
+            else:
+                return None
 
     
-class Admeditplan_view(View):
+class ModPlans_view(View):
     
     def get(self,request):
 
@@ -365,9 +419,61 @@ class Admeditplan_view(View):
             "plans": models.Plans.objects.all()
         }
 
-        return render(request, 'admeditplan.html', context=context)
+        return render(request, 'mod/plans.html', context=context)
     
-class Admaddprofit_view(View):
+class ModEditPlan_view(View):
+
+    def get(self, request, plan_id):
+
+        context = {
+            "plan": models.Plans.objects.get(id=plan_id),
+            "edit": None,
+        }
+        return render(request, "mod/addplan.html", context=context)
+    
+    def post(self, request, plan_id):
+        
+        plan_name = request.POST["plan_name"]
+        plan_min_percentage = request.POST["plan_min_percentage"]
+        plan_max_percentage = request.POST["plan_max_percentage"]
+        plan_min_price = request.POST["plan_min_price"]
+        plan_max_price = request.POST["plan_max_price"]
+
+        plan = models.Plans.objects.get(id=plan_id)
+        plan.plan_name = plan_name
+        plan.plan_min_percentage = plan_min_percentage
+        plan.plan_max_percentage = plan_max_percentage
+        plan.plan_min_price = plan_min_price
+        plan.plan_max_price = plan_max_price
+        plan.save()
+
+        messages.success(request, "Plan changed")
+        return redirect("/moderator/plans")
+    
+class ModAddProfit_view(View):
     
     def get(self,request):
-        return render(request, 'admaddprofit.html')
+        return render(request, 'mod/addprofit.html')
+    
+    def post(self, request):
+
+        plan_name = request.POST["plan_name"]
+        percentage = request.POST["percentage"]
+        days = request.POST["days"]
+
+        plan = models.Plans.objects.get(plan_name=plan_name)
+        user_plans = models.User_plan.objects.filter(plan=plan)
+        for user_plan in user_plans:
+
+            profit = int(days)*(float(user_plan.invested_amount)*(float(percentage)/100))
+            user_plan.user_profit = float(user_plan.user_profit) + profit
+            user_plan.save()
+
+            addprofit = models.Addprofit()
+            addprofit.user = user_plan.user
+            addprofit.plan = plan
+            addprofit.profit = profit
+            addprofit.percentage = percentage
+            addprofit.save()
+
+        return redirect("/moderator/addprofit")
