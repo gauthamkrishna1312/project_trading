@@ -1,4 +1,4 @@
-{% extends 'user/base.html' %}
+{% extends 'mod/admbase.html' %}
 
 {% block title%}
 ADMIN WITHDRAW
@@ -8,9 +8,11 @@ ADMIN WITHDRAW
 <div class="m-5">
 <h1> HISTORY </h1>
 <br>
-<a href="{% url 'history' action='payments' %}"> DEPOSIT ||</a>
-<a href="{% url 'history' action='withdraws' %}"> WITHDRAWAL </a>
-<a href="{% url 'history' action='profit' %}"> PROFIT </a>
+<h3> {{ user.username }} </h3>
+<br>
+<a href="{% url 'mod_history' id=user.id action='payments' %}"> DEPOSIT ||</a>
+<a href="{% url 'mod_history' id=user.id action='withdraws' %}"> WITHDRAWAL </a>
+<a href="{% url 'mod_history' id=user.id action='profit' %}"> PROFIT </a>
 <table class="table table-dark table-striped">
   <thead>
       <tr>

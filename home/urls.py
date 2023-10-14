@@ -30,6 +30,7 @@ urlpatterns = [
     path('moderator/addplan/', login_required(views.ModAddPlan_view.as_view()), name='mod_add_plan'),
     path('moderator/plans/', login_required(views.ModPlans_view.as_view()), name='mod_plans'),
     path('moderator/editplan/<int:plan_id>', login_required(views.ModEditPlan_view.as_view()), name='mod_edit_plan'),
+    path('history/<int:id>/<str:action>', login_required(views.History_view.as_view()), name='mod_history'),
 
     path('signup/', views.Signup_view.as_view(), name='signup'),
     path('login/', views.Login_view.as_view(), name='login'),

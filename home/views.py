@@ -26,8 +26,8 @@ class Dashboard_view(View):
     def get(self, request):
         
         user_plans = models.User_plan.objects.filter(user=request.user)
-        payments = models.Payment.objects.filter(user=request.user)
-        withdraws = models.Withdraw.objects.filter(user=request.user)
+        payments = [payment for payment in models.Payment.objects.filter(user=request.user) if payment.transaction_status != "approved"]
+        withdraws = [withdraw for withdraw in models.Withdraw.objects.filter(user=request.user) if withdraw.withdraw_status != "done"]
 
         context = {
             "user_plans": user_plans,
@@ -179,15 +179,6 @@ class Contact_view(View):
     def get(self, request):
         return render(request, 'user/contact.html')
 
-# class Yourplan_view(View):
-    
-#     def get(self, request):
-
-#         user_plan = models.User_plan.objects.filter(user=request.user)
-#         context = {
-#             "user_plan": user_plan,
-#         }
-#         return render(request, 'yourplan.html', context=context)
 
 class Plans_view(View):
     
@@ -249,7 +240,13 @@ class Withdraw_view(View):
 class Refer_view(View):
     
     def get(self,request):
-        return render(request, 'user/refer.html')
+
+        context = {
+            "refer": models.Referral.objects.get(user=request.user),
+            "members": models.Referral.objects.get(user=request.user).direct.all(),
+        }
+
+        return render(request, 'user/refer.html', context=context)
 
 class Payment_view(View):
     
@@ -293,14 +290,24 @@ class History_view(View):
     def get(self,request, **kwargs):
 
         action = kwargs["action"]
-        payments = models.Payment.objects.filter(user=request.user)
-        withdraw = models.Withdraw.objects.filter(user=request.user)
-        addprofit = models.Addprofit.objects.filter(user=request.user)
-        ids = range(1,)
+
+        if request.user.is_superuser:
+            
+            user = models.User.objects.get(id=kwargs['id'])
+            context = {
+                "payments": models.Payment.objects.filter(user=user),
+                "withdraws":  models.Withdraw.objects.filter(user=user),
+                "addprofits": models.Addprofit.objects.filter(user=user),
+                "action": action,
+                "user": user,
+            }
+
+            return render(request, "mod/history.html", context=context)
+
         context = {
-            "payments": payments,
-            "withdraws": withdraw,
-            "addprofits": addprofit,
+            "payments": models.Payment.objects.filter(user=request.user),
+            "withdraws": models.Withdraw.objects.filter(user=request.user),
+            "addprofits": models.Addprofit.objects.filter(user=request.user),
             "action": action,
         }
 
@@ -325,32 +332,13 @@ class ModMembers_view(View):
             }
 
             return render(request, 'mod/membersactive.html', context=context)
-        
-        members = []
-
-        for user in User.objects.all():
-            if user.is_superuser:
-                continue
-            members.append(user)
 
         context = {
-            "members": members,
+            "members": [ user for user in User.objects.all() if not user.is_superuser ],
         }
 
         return render(request, 'mod/members.html', context=context)
 
-# class Admregact_view(View):
-    
-#     def get(self,request):
-
-#         user_plans = models.User_plan.objects.filter(user_status="Active")
-#         ids = range(1,len(user_plans)+1)
-#         context = {
-#             "user_plans": user_plans,
-#             "ids": ids,
-#         }
-
-#         return render(request, 'mod/admregact.html', context=context)
 
 class ModPayments_view(View):
     

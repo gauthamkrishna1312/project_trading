@@ -31,7 +31,9 @@ ADMIN ACTIVE USERS
         <td>@mdo</td>
         <td>{{ member.user_profit }}</td>
         <td>@mdo</td>
-        <a> <td> view </td></a>
+        <td>
+        <a href="{% url 'mod_history' id=member.user.id action='payments' %}"> view </a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
