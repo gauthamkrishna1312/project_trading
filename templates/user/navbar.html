@@ -1,25 +1,24 @@
-<div class="sidenav" style="border-right: 1px solid #444;">
-    <div class="sidenav-header py-3">
-        <h1 class="fw-bold">AI FX</h1>
+<div class="sidenav" style="background-color: #222831; border-right: 2px solid #2d4059;">
+    <div class="sidenav-header py-3" style="background-color: #2d4059;">
         <button class="toggle-btn" style="visibility: hidden;" id="sidebar-toggle-btn-1">&equiv;</button>
         <div class="dropdown">
-            <button onclick="myFunction()" class="dropbtn"><i class="fa-solid fa-user"></i> {{ user.username }}</button>
+            <button onclick="myFunction()" class="dropbtn"> {{ user.username }} <i class="fa-solid fa-angle-down"></i></button>
             <div id="myDropdown" class="dropdown-content">
                 <ul>
                     {% if user.is_authenticated %}
                     <li class="list-item py-2" >
                         
-                        <a href="{% url 'profile' %}" class="text-dark"> <i class="fa-solid fa-user"></i> {{ user.username }}</a>
+                        <a href="{% url 'profile' %}" class="text-dark"><i class="fa-solid fa-user"></i> Profile</a>
                     </li>
                     <li class="list-item py-2">
-                        <a href="{% url 'logout' %}" class="text-dark">Logout</a>
+                        <a href="{% url 'logout' %}" class="text-dark"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </li>
                     {% else %}
                     <li class="list-item py-2">
-                        <a href="{% url 'signup' %}">Sign Up</a>
+                        <a href="{% url 'signup' %}" class="text-dark">Sign Up</a>
                     </li>
                     <li class="list-item py-2">
-                        <a href="{% url 'login' %}">Log In</a>
+                        <a href="{% url 'login' %}" class="text-dark">Log In</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -28,7 +27,7 @@
           </div>
         
     </div>
-    <ul style="height: 50%;" class="py-4">
+    <ul style=" background-color: #222831;" class="py-4">
         <li class="list-item py-2">
             <a href="{% url 'user_dashboard' %}">
                 DASHBOARD
