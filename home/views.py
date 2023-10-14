@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.core.exceptions import ValidationError
 
+from random import randint
+
 from . import models
 
 
@@ -48,13 +50,30 @@ class Signup_view(View):
         uname = request.POST["signup_uname"]
         passw1 = request.POST["signup_passw1"]
         passw2 = request.POST["signup_passw2"]
+        referral_id = request.POST.get("referral_id", None)
 
         temp_context = {
                 "fname": fname,
                 "lname": lname,
                 "email": email,
-                "uname": uname
+                "uname": uname,
+                "referral": referral_id,
             }
+        
+        if models.User.objects.filter(email=email).exists() == True:
+
+            messages.error(request, f"an account exists in this email {email}")
+            return redirect("/signup")
+        
+        if models.User.objects.filter(username=uname).exists() == True:
+
+            messages.error(request, "username is taken")
+            return redirect("/signup")
+        
+        if models.User.objects.filter(username=uname, email=email).exists() == True:
+
+            messages.error(request, "user already exists")
+            return redirect("/signup")
         
         try:
             validate_password(passw1)
@@ -73,16 +92,57 @@ class Signup_view(View):
         authenticate(username=uname, password=passw1)
         login(request, user)
 
+        print("user created")
+
+        self.add_user_plan(request.user)
+        print("user_plan added")
+        self.add_referral(request.user)
+        print("referral added")
+        if referral_id is not None:
+            self.add_referred(request.user, referral_id)
+            print("referral tree")
+
+        messages.success(request, "Signup Successful")
+        return redirect("/dashboard")
+    
+    def add_user_plan(self, user):
+
         user_plan = models.User_plan()
-        user_plan.user = request.user
+        user_plan.user = user
         user_plan.invested_amount = "0"
         user_plan.plan = models.Plans.objects.get(id=1)
         user_plan.user_status = "Inactive"
         user_plan.user_profit = "0"
         user_plan.save()
 
-        messages.success(request, "Signup Successful")
-        return redirect("/dashboard")
+    def add_referral(self, user):
+
+        referral = models.Referral()
+        referral.user = user
+        referral_id = str(user.username)+"@"+str(randint(1000, 9999))
+        referral.referral_id = referral_id
+        referral.save()
+
+    def add_referred(self, user, id):
+
+        referred_user = models.Referral.objects.get(referral_id=id)
+        referred_user.direct.add(user)
+        referred_user.save()
+        
+        referrer_user = models.Referral.objects.get(user=user)
+        referrer_user.referred_user = referred_user.user
+        referrer_user.save()
+
+        if referred_user.referred_user is not None:
+            referred_user_1 = models.Referral.objects.get(user=referred_user.referred_user)
+            referred_user_1.level_1.add(referrer_user.user)
+            if referred_user_1.referred_user is not None:
+                referred_user_2 = models.Referral.objects.get(user=referred_user_1.referred_user)
+                referred_user_2.level_2.add(referrer_user.user)
+                if referred_user_2.referred_user is not None:
+                    referred_user_3 = models.Referral.objects.get(user=referred_user_3.referred_user)
+                    referred_user_3.level_3.add(referrer_user.user)
+
 
 class Login_view(View):
 
@@ -206,10 +266,10 @@ class Payment_view(View):
         
         if float(amount) < 100:
             messages.info(request, "minimum amount is 100")
-            return render(request, "payment.html")
+            return render(request, "user/payment.html")
         if float(str(float(amount)/50).split(".")[1]) > 0:
             messages.info(request, "only multiples of 50")
-            return render(request, "payment.html")
+            return render(request, "user/payment.html")
         else:
 
             payment = models.Payment()
@@ -266,8 +326,15 @@ class ModMembers_view(View):
 
             return render(request, 'mod/membersactive.html', context=context)
         
+        members = []
+
+        for user in User.objects.all():
+            if user.is_superuser:
+                continue
+            members.append(user)
+
         context = {
-            "members": User.objects.all(),
+            "members": members,
         }
 
         return render(request, 'mod/members.html', context=context)
@@ -462,21 +529,41 @@ class ModAddProfit_view(View):
     
     def post(self, request):
 
-        plan_name = request.POST["plan_name"]
-        percentage = request.POST["percentage"]
-        days = request.POST["days"]
+        plan_name = request.POST.get("plan_name", None)
+        percentage = request.POST.get("percentage", None)
 
-        plan = models.Plans.objects.get(plan_name=plan_name)
-        user_plans = models.User_plan.objects.filter(plan=plan)
-        for user_plan in user_plans:
+        uname = request.POST.get("uname", None)
+        amount = request.POST.get("amount", None)
 
-            profit = float(days)*(float(user_plan.invested_amount)*(float(percentage)/100))
-            user_plan.user_profit = float(user_plan.user_profit) + profit
+        days = request.POST["days"]\
+        
+        if uname == None:
+
+            plan = models.Plans.objects.get(plan_name=plan_name)
+            user_plans = models.User_plan.objects.filter(plan=plan)
+            for user_plan in user_plans:
+
+                profit = float(days)*(float(user_plan.invested_amount)*(float(percentage)/100))
+                user_plan.user_profit = float(user_plan.user_profit) + profit
+                user_plan.save()
+
+                addprofit = models.Addprofit()
+                addprofit.user = user_plan.user
+                addprofit.plan = plan
+                addprofit.profit = profit
+                addprofit.percentage = percentage
+                addprofit.save()
+
+        else:
+
+            user = models.User.objects.get(username=uname)
+            user_plan = models.User_plan.objects.get(user=user)
+            user_plan.user_profit = float(user_plan.user_profit) + float(amount)
             user_plan.save()
 
             addprofit = models.Addprofit()
-            addprofit.user = user_plan.user
-            addprofit.plan = plan
+            addprofit.user = user
+            addprofit.plan = user_plan.plan
             addprofit.profit = profit
             addprofit.percentage = percentage
             addprofit.save()

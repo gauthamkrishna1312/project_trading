@@ -23,6 +23,7 @@ Sign Up
         <input type="username" class="form-control my-3" placeholder="username" aria-label="username" value="{{ uname | default:'' }}" name="signup_uname">
         <input type="password" class="form-control my-3" placeholder="password" aria-label="password" name="signup_passw1">
         <input type="password" class="form-control my-3" placeholder="confirm password" aria-label="confirm password" name="signup_passw2">
+        <input type="text" class="form-control my-3" placeholder="Referral ID" aria-label="username" value="{{ referral | default:'' }}" name="referral_id">
         <button type="submit" class="btn btn-secondary">Sign Up</button>
         
     </form>

@@ -44,13 +44,13 @@ class Addprofit(models.Model):
     percentage = models.CharField(max_length=100)
     profit = models.CharField(max_length=100)
 
-# class Refarral(models.Model):
+class Referral(models.Model):
 
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # direct = models.ManyToManyField(User)
-    # level_1 = models.ManyToManyField(User)
-    # level_2 = models.ManyToManyField(User)
-    # level_3 = models.ManyToManyField(User)
-    # level_4 = models.ManyToManyField(User)
-    # level_5 = models.ManyToManyField(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    referred_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="%(class)s_referred")
+    referral_id = models.CharField(max_length=100)
+    direct = models.ManyToManyField(User, blank=True, related_name="%(class)s_direct")
+    level_1 = models.ManyToManyField(User, blank=True, related_name="%(class)s_level1")
+    level_2 = models.ManyToManyField(User, blank=True, related_name="%(class)s_level2")
+    level_3 = models.ManyToManyField(User, blank=True, related_name="%(class)s_level3")
 
