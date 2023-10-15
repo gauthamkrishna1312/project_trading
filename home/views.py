@@ -98,7 +98,8 @@ class Signup_view(View):
         print("user_plan added")
         self.add_referral(request.user)
         print("referral added")
-        if referral_id is not None:
+        print(f"refer [{referral_id}]")
+        if len(referral_id) > 5:
             self.add_referred(request.user, referral_id)
             print("referral tree")
 
@@ -142,7 +143,7 @@ class Signup_view(View):
                 referred_user_2 = models.Referral.objects.get(user=referred_user_1.referred_user)
                 referred_user_2.level_2.add(referrer_user.user)
                 if referred_user_2.referred_user is not None:
-                    referred_user_3 = models.Referral.objects.get(user=referred_user_3.referred_user)
+                    referred_user_3 = models.Referral.objects.get(user=referred_user_2.referred_user)
                     referred_user_3.level_3.add(referrer_user.user)
 
 
@@ -302,6 +303,7 @@ class History_view(View):
                 "addprofits": models.Addprofit.objects.filter(user=user),
                 "action": action,
                 "user": user,
+                "admin": True,
             }
 
             return render(request, "mod/history.html", context=context)
@@ -330,13 +332,13 @@ class ModMembers_view(View):
         if "status" in kwargs:
             
             context = {
-                "members": models.User_plan.objects.filter(user_status=kwargs["status"]),
+                "members": [[member, referred] for member in models.User_plan.objects.filter(user_status=kwargs["status"]) for referred in models.Referral.objects.filter(user=member.user)],
             }
 
             return render(request, 'mod/membersactive.html', context=context)
 
         context = {
-            "members": [ user for user in User.objects.all() if not user.is_superuser ],
+            "members": [ [user, referred, user_plan] for user in User.objects.all() if not user.is_superuser for referred in models.Referral.objects.filter(user=user) for user_plan in models.User_plan.objects.filter(user=user)],
         }
 
         return render(request, 'mod/members.html', context=context)
@@ -345,11 +347,12 @@ class ModMembers_view(View):
 class ModPayments_view(View):
     
     def get(self,request, **kwargs):
+
+        action = kwargs["action"]
         
         if "id" in kwargs:
             
             payment_id = kwargs["id"]
-            action = kwargs["action"]
 
             payment = models.Payment.objects.get(id=payment_id)
             if action == "approve":
@@ -365,7 +368,10 @@ class ModPayments_view(View):
                     plan = self.get_plan(user_plan.invested_amount)
                     user_plan.plan = plan
                     user_plan.user_status = "Active"
+                    if not user_plan.user.is_active:
+                        user_plan.user.is_active = True
                     user_plan.save()
+
 
                 payment.transaction_status = "approved"
                 payment.save()
@@ -381,13 +387,13 @@ class ModPayments_view(View):
                 messages.success(request, "payment rejected")
                 return redirect("/moderator/payments/rejected")
 
-        else:
-            status = kwargs["status"]
-            context = {
-                "payments": models.Payment.objects.filter(transaction_status=status),
-            }
+        
+        context = {
+            "payments": models.Payment.objects.filter(transaction_status=action),
+            "action": action,
+        }
 
-            return render(request, "mod/payments.html", context=context)
+        return render(request, "mod/payments.html", context=context)
         
     def get_plan(self, amount):
 
@@ -428,7 +434,7 @@ class ModWithdraw_view(View):
 
         status = kwargs["status"]
         context = {
-            "withdraws": models.Withdraw.objects.all(),
+            "withdraws": models.Withdraw.objects.filter(withdraw_status=status),
             "status": status,
         }
 
@@ -515,7 +521,13 @@ class ModEditPlan_view(View):
 class ModAddProfit_view(View):
     
     def get(self,request):
-        return render(request, 'mod/addprofit.html')
+
+        context = {
+            "plans": models.Plans.objects.all(),
+            "members": [member for member in models.User.objects.all() if not member.is_superuser]
+        }
+
+        return render(request, 'mod/addprofit.html', context=context)
     
     def post(self, request):
 
@@ -535,6 +547,11 @@ class ModAddProfit_view(View):
 
                 profit = float(days)*(float(user_plan.invested_amount)*(float(percentage)/100))
                 user_plan.user_profit = float(user_plan.user_profit) + profit
+                user_plan.days = float(user_plan.days) + float(days)
+
+                self.add_referral_profit(user_plan.user, amount)
+                
+                user_plan.total_profit = str(float(user_plan.user_profit) + float(user_plan.user_referral_profit))
                 user_plan.save()
 
                 addprofit = models.Addprofit()
@@ -544,23 +561,23 @@ class ModAddProfit_view(View):
                 addprofit.percentage = percentage
                 addprofit.save()
 
-                self.add_referral_profit(user_plan.user, amount)
-
         else:
 
             user = models.User.objects.get(username=uname)
             user_plan = models.User_plan.objects.get(user=user)
             user_plan.user_profit = float(user_plan.user_profit) + float(amount)
+            user_plan.days = float(user_plan.days) + float(days)
+
+            self.add_referral_profit(user, amount)
+
+            user_plan.total_profit = str(float(user_plan.user_profit) + float(user_plan.user_referral_profit))
             user_plan.save()
 
             addprofit = models.Addprofit()
             addprofit.user = user
             addprofit.plan = user_plan.plan
             addprofit.profit = amount
-            addprofit.percentage = percentage
             addprofit.save()
-
-            self.add_referral_profit(user, amount)
 
         messages.success(request, "profit added")
         return redirect("/moderator/addprofit")

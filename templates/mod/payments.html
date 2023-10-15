@@ -15,9 +15,9 @@ ADMIN PAYMENTS
 </ul>
 <nav>
   <ul class="pagination">
-    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' status='pending' %}"><i class="fa-solid fa-angles-left"></i> PENDING</a></li>
-    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' status='approved' %}"> APPROVED</a></li>
-    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' status='rejected' %}"> REJECTED  <i class="fa-solid fa-angles-right"></i></a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' action='pending' %}"><i class="fa-solid fa-angles-left"></i> PENDING</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' action='approved' %}"> APPROVED</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' action='rejected' %}"> REJECTED  <i class="fa-solid fa-angles-right"></i></a></li>
   </ul>
 </nav>
 
@@ -30,7 +30,9 @@ ADMIN PAYMENTS
         <th scope="col">AMOUNT</th>
         <th scope="col">TRANSATION ID</th>
         <th scope="col">STATUS</th>
+        {% if action == 'pending' %}
         <th scope="col">ACTION</th>
+        {% endif %}
         
       </tr>
     </thead>

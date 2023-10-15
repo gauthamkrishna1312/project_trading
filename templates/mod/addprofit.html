@@ -25,9 +25,10 @@ ADMIN ADD PROFIT
         <div style="background-color: #eeeeee; padding: 10px; border-radius: 7px; color: black;">
 
           <label for="plans">Choose a Plan name:</label>
-          <select id="plans" name="plans">
-            <option value="volvo">plan 1</option>
-            <option value="volvo">plan 2</option>
+          <select id="plans" name="plan">
+            {% for plan in plans %}
+            <option value="{{ plan.plan_name }}">{{ plan.plan_name }}</option>
+            {% endfor %}
           </select>
         </div>
       </div>
@@ -46,9 +47,10 @@ ADMIN ADD PROFIT
         <div style="background-color: #eeeeee; padding: 10px; border-radius: 7px; color: black;">
 
           <label for="plans">Choose a user name:</label>
-          <select id="plans" name="plans">
-            <option value="volvo">user 1</option>
-            <option value="volvo">user 2</option>
+          <select id="plans" name="uname">
+            {% for member in members %}
+            <option value="{{ member.username }}">{{ member.username }}</option>
+            {% endfor %}
           </select>
         </div>      
       </div>

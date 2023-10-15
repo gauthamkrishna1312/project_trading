@@ -20,7 +20,7 @@ WALLET
               <ul class="list-group">
                 <li class="list-group-item" style="background-color: #2d4059; color: white;">({{ user_plan.plan.plan_min_percentage }}% - {{ user_plan.plan.plan_max_percentage }}%)</li>
                 <li class="list-group-item" style="background-color: #2d4059; color: white;">AMOUNT - $ {{ user_plan.invested_amount }}</li>
-                <li class="list-group-item" style="background-color: #2d4059; color: white;">TOTAL DAYS - </li>
+                <li class="list-group-item" style="background-color: #2d4059; color: white;">TOTAL DAYS -  {{ user_plan.days }} </li>
               </ul>
             </div>
             <div class="card-footer text-body-secondary">
@@ -40,10 +40,10 @@ WALLET
               <!-- <li class="list-group-item" style="background-color: #2d4059; color: white;"></li> -->
             </ul>
             <div class="card-footer text-white">
-                Total Profit -
+                Total Profit - $ {{ user_plan.user_referral_profit }}
             </div>
           </div>
                <br>
                 {% comment %} <h3 class="text-white"> TOTAL - </h3> {% endcomment %}
-                <h3 class="text-white"> BALANCE - $ {{ user_plan.user_profit }}</h3>
+                <h3 class="text-white"> BALANCE - $ {{ user_plan.total_profit }}</h3>
 {% endblock %}

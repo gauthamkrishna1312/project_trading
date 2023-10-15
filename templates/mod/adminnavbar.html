@@ -2,7 +2,7 @@
     <div class="sidenav-header py-3" style="background-color: #2d4059;">
         <button class="toggle-btn" style="visibility: hidden;" id="sidebar-toggle-btn-1">&equiv;</button>
         <div class="dropdown">
-            <button onclick="myFunction()" class="dropbtn"> {{ user.username }} <i class="fa-solid fa-angle-down"></i></button>
+            <button onclick="myFunction()" class="dropbtn"> Admin <i class="fa-solid fa-angle-down"></i></button>
             <div id="myDropdown" class="dropdown-content">
                 <ul>
                        {% if user.is_authenticated %}
@@ -42,7 +42,7 @@
               </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link py-3" href="{% url 'mod_payments' status='pending' %}">
+            <a class="nav-link py-3" href="{% url 'mod_payments' action='pending' %}">
                 PAYMENTS
             </a>
         </li>

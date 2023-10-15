@@ -32,12 +32,13 @@ ADMIN WITHDRAW
         <th scope="col">ACC NO/ WALLET ID</th>
         <th scope="col">IFSC CODE</th>
         <th scope="col">STATUS</th>
+        {% if status == 'pending' %}
         <th scope="col">ACTION</th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
       {% for withdraw in withdraws %}
-      {% if withdraw.withdraw_status == status %}
       <tr>
         <th scope="row">{{ forloop.counter }}</th>
         <td>{{ withdraw.user.username }}</td>
@@ -61,7 +62,6 @@ ADMIN WITHDRAW
           {% endif %}
         </td>
       </tr>
-      {% endif %}
       {% endfor %}
     
     </tbody>

@@ -19,6 +19,8 @@ class User_plan(models.Model):
     user_status = models.CharField(max_length=100)
     user_profit = models.CharField(max_length=100)
     user_referral_profit = models.CharField(max_length=100, null=True)
+    total_profit = models.CharField(max_length=100, null=True)
+    days = models.CharField(max_length=100, null=True)
     
 
 class Payment(models.Model):
@@ -43,7 +45,7 @@ class Addprofit(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plans, on_delete=models.CASCADE)
-    percentage = models.CharField(max_length=100)
+    percentage = models.CharField(max_length=100, null=True)
     profit = models.CharField(max_length=100)
 
 class ReferralDetails(models.Model):
