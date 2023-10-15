@@ -12,7 +12,7 @@ ADMIN ADD PROFIT
   {% endfor %}
 </ul>
 
-<div class="m-5">
+<div>
 <h1> ADMIN ADD PROFIT</h1>
 <br>
 
@@ -20,8 +20,16 @@ ADMIN ADD PROFIT
   <form class=" g-3" style="width: 100%; max-width: 400px;" method="POST">
     {% csrf_token %}
     <div class="row">
-      <div class="col">
-        <input type="text" class="form-control" placeholder="PLAN NAME" aria-label="First name" name="plan_name">
+      <div class="col" >
+        <!-- <input type="text" class="form-control" placeholder="PLAN NAME" aria-label="First name" name="plan_name"> -->
+        <div style="background-color: #eeeeee; padding: 10px; border-radius: 7px; color: black;">
+
+          <label for="plans">Choose a Plan name:</label>
+          <select id="plans" name="plans">
+            <option value="volvo">plan 1</option>
+            <option value="volvo">plan 2</option>
+          </select>
+        </div>
       </div>
     </div>
     <input type="text" class="form-control my-2" placeholder="PERCENTAGE" aria-label="PERCENTAGE" name="percentage">
@@ -29,13 +37,20 @@ ADMIN ADD PROFIT
     <button type="submit" class="btn btn-secondary">ADD</button>
   </form>
 </div>
-
+<br>
 <div>
   <form class=" g-3" style="width: 100%; max-width: 400px;" method="POST">
     {% csrf_token %}
     <div class="row">
       <div class="col">
-        <input type="text" class="form-control" placeholder="USER NAME" aria-label="First name" name="uname">
+        <div style="background-color: #eeeeee; padding: 10px; border-radius: 7px; color: black;">
+
+          <label for="plans">Choose a user name:</label>
+          <select id="plans" name="plans">
+            <option value="volvo">user 1</option>
+            <option value="volvo">user 2</option>
+          </select>
+        </div>      
       </div>
     </div>
     <input type="text" class="form-control my-2" placeholder="AMOUNT" aria-label="PERCENTAGE" name="amount">
