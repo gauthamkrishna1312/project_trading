@@ -5,16 +5,6 @@ REFER
 {% endblock %}
 
 {% block content%}
-<div class="m-5">
+<div>
 <h1> REFER </h1>
-
-<h2> Refferral ID : {{ refer.referral_id }} </h2>
-
-<h4> referrde by : {{ refer.referred_user.username }} </h4>
-
-<h3> referred members </h3>
-{% for member in members %}
-<h4> {{ member.username }} </h4>
-{% endfor %}
-
 {% endblock %}
