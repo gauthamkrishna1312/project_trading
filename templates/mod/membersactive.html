@@ -5,7 +5,7 @@ ADMIN ACTIVE USERS
 {% endblock %}
 
 {% block content%}
-<div class="m-5">
+<div>
 <h1> ACTIVE USERS</h1>
 <br>
 <table class="table table-dark table-striped">
@@ -32,7 +32,7 @@ ADMIN ACTIVE USERS
         <td>{{ member.user_profit }}</td>
         <td>@mdo</td>
         <td>
-        <a href="{% url 'mod_history' id=member.user.id action='payments' %}"> view </a>
+        <a href="{% url 'mod_history' id=member.user.id action='payments' %}" class="btn btn-secondary"> view </a>
         </td>
       </tr>
       {% endfor %}

@@ -13,14 +13,67 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">  </head>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+    <style>
+      header div{
+        display: block;
+      }
+.sidenav{
+  z-index: 1;
+}
+      .sidenav .dropdown .dropbtn{
+
+        background-color: #ff5722;
+      }
+      .dropdown{
+        width: 100%;
+        height: 100%;
+      }
+      .dropdown .dropbtn { 
+        width: 40%;
+        height: 70%;
+        border-radius: 10px;
+
+      }
+      .dropdown-content{
+        width: 100%;
+        background-color: #eeeeee;
+      }
+      .dropdown-content a:hover{
+        background-color: #ff5722;
+      }
+      .sidenav a{
+        padding: 0.25em 0;
+      }
+      .sidenav a:hover {
+background-color: #ff5722;
+color: #eeeeee;
+}
+      .djhrjh{
+        border-left: 2px solid #2d4059;
+      }
+      
+      @media screen and (max-width: 768px) {
+        .djhrjh{
+          border-left: none;
+          border-top: 2px solid #2d4059;
+        }
+        
+        header div{
+          display: none;
+        }
+      }
+    </style>
+  </head>
     <body>
 
     {% include 'mod/adminnavbar.html' %}
 
-
+    <header class=" d-flex align-items-center" style="background-color: #2d4059; margin-left: 0; height: 88px;">
+      <div style="width: 260px;"></div>
+       <h1 class="fw-bold text-light" >Administration</h1>
+     </header>
               <!-- Content -->
-              <main class=" main-content" style="min-height: 100vh; background-color: #555; color: #fff;">
+              <main class=" main-content" style="background-color: #222831; color: #fff; min-height: 100vh;">
                 <button class="toggle-btn" id="sidebar-toggle-btn-2"><i class="fa-solid fa-bars"></i></button>
 
                 {% block content %}{% endblock %}

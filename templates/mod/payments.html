@@ -5,7 +5,7 @@ ADMIN PAYMENTS
 {% endblock %}
 
 {% block content%}
-<div class="m-5">
+<div>
 <h1> PAYMENTS </h1>
 <br>
 <ul class="messages">
@@ -13,9 +13,13 @@ ADMIN PAYMENTS
   <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
   {% endfor %}
 </ul>
-<a href="{% url 'mod_payments' status='pending' %}"> PENDING  ||</a>
-<a href="{% url 'mod_payments' status='approved' %}"> APPROVED ||</a>
-<a href="{% url 'mod_payments' status='rejected' %}"> REJECTED </a>
+<nav>
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' status='pending' %}"><i class="fa-solid fa-angles-left"></i> PENDING</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' status='approved' %}"> APPROVED</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_payments' status='rejected' %}"> REJECTED  <i class="fa-solid fa-angles-right"></i></a></li>
+  </ul>
+</nav>
 
 <table class="table table-dark table-striped">
   <thead>
@@ -41,8 +45,8 @@ ADMIN PAYMENTS
         <td>{{ payment.transaction_status }}</td>
         <td>
         {% if payment.transaction_status == 'pending' %}
-        <a href="{% url 'mod_payments_approve' action='approve' id=payment.id %}" > APPROVE </a>
-        <a href="{% url 'mod_payments_approve' action='reject' id=payment.id %}" > REJECT </a>
+        <a href="{% url 'mod_payments_approve' action='approve' id=payment.id %}" class="btn btn-success" > APPROVE </a>
+        <a href="{% url 'mod_payments_approve' action='reject' id=payment.id %}" class="btn btn-danger" > REJECT </a>
         {% endif %}
         </td>
       </tr>
