@@ -113,12 +113,14 @@ class Signup_view(View):
         user_plan.plan = models.Plans.objects.get(id=1)
         user_plan.user_status = "Inactive"
         user_plan.user_profit = "0"
+        user_plan.user_referral_profit = "0"
         user_plan.save()
 
     def add_referral(self, user):
 
         referral = models.Referral()
         referral.user = user
+        referral.referral_details = models.ReferralDetails.objects.all()[0]
         referral_id = str(user.username)+"@"+str(randint(1000, 9999))
         referral.referral_id = referral_id
         referral.save()
@@ -542,6 +544,8 @@ class ModAddProfit_view(View):
                 addprofit.percentage = percentage
                 addprofit.save()
 
+                self.add_referral_profit(user_plan.user, amount)
+
         else:
 
             user = models.User.objects.get(username=uname)
@@ -552,9 +556,36 @@ class ModAddProfit_view(View):
             addprofit = models.Addprofit()
             addprofit.user = user
             addprofit.plan = user_plan.plan
-            addprofit.profit = profit
+            addprofit.profit = amount
             addprofit.percentage = percentage
             addprofit.save()
 
+            self.add_referral_profit(user, amount)
+
         messages.success(request, "profit added")
         return redirect("/moderator/addprofit")
+    
+    def add_referral_profit(self, user, amount):
+
+        referral = models.Referral.objects.get(user=user)
+        if referral.referred_user is not None:
+            referral_1 = models.Referral.objects.get(user=referral.referred_user)
+            user_plan = models.User_plan.objects.get(user=referral.referred_user)
+            user_plan.user_referral_profit = float(user_plan.user_referral_profit) + (float(amount)*(float(referral_1.referral_details.percent_direct)/100))
+            user_plan.save()
+            if referral_1.referred_user is not None:
+                referral_2 = models.Referral.objects.get(user=referral_1.referred_user)
+                user_plan = models.User_plan.objects.get(user=referral_1.referred_user)
+                user_plan.user_referral_profit = float(user_plan.user_referral_profit) + (float(amount)*(float(referral_2.referral_details.percent_level_1)/100))
+                user_plan.save()
+                if referral_2.referred_user is not None:
+                    referral_3 = models.Referral.objects.get(user=referral_2.referred_user)
+                    user_plan = models.User_plan.objects.get(user=referral_2.referred_user)
+                    user_plan.user_referral_profit = float(user_plan.user_referral_profit) + (float(amount)*(float(referral_3.referral_details.percent_level_2)/100))
+                    user_plan.save()
+                    if referral_3.referred_user is not None:
+                        referral_4 = models.Referral.objects.get(user=referral_3.referred_user)
+                        user_plan = models.User_plan.objects.get(user=referral_3.referred_user)
+                        user_plan.user_referral_profit = float(user_plan.user_referral_profit) + (float(amount)*(float(referral_3.referral_details.percent_level_3)/100))
+                        user_plan.save()
+
