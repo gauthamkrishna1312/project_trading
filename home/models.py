@@ -18,6 +18,8 @@ class User_plan(models.Model):
     invested_amount = models.CharField(max_length=100)
     user_status = models.CharField(max_length=100)
     user_profit = models.CharField(max_length=100)
+    user_referral_profit = models.CharField(max_length=100, null=True)
+    
 
 class Payment(models.Model):
 
@@ -44,9 +46,18 @@ class Addprofit(models.Model):
     percentage = models.CharField(max_length=100)
     profit = models.CharField(max_length=100)
 
+class ReferralDetails(models.Model):
+    
+    percent_direct = models.CharField(max_length=100, null=True)
+    percent_level_1 = models.CharField(max_length=100, null=True)
+    percent_level_2 = models.CharField(max_length=100, null=True)
+    percent_level_3 = models.CharField(max_length=100, null=True)
+
+
 class Referral(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    referral_details = models.ForeignKey(ReferralDetails, on_delete=models.CASCADE, null=True)
     referred_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="%(class)s_referred")
     referral_id = models.CharField(max_length=100)
     direct = models.ManyToManyField(User, blank=True, related_name="%(class)s_direct")

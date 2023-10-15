@@ -27,6 +27,7 @@ urlpatterns = [
     path('moderator/withdraw/<str:status>', login_required(views.ModWithdraw_view.as_view()), name='mod_withdraw'),
     path('moderator/withdraw/action/<str:action>/<int:id>', login_required(views.ModWithdraw_view.as_view()), name='mod_withdraw_action'),
     path('moderator/addprofit/', login_required(views.ModAddProfit_view.as_view()), name='mod_add_profit'),
+    path('moderator/addprofit/<str:action>', login_required(views.ModAddProfit_view.as_view()), name='mod_add_referal_profit'),
     path('moderator/addplan/', login_required(views.ModAddPlan_view.as_view()), name='mod_add_plan'),
     path('moderator/plans/', login_required(views.ModPlans_view.as_view()), name='mod_plans'),
     path('moderator/editplan/<int:plan_id>', login_required(views.ModEditPlan_view.as_view()), name='mod_edit_plan'),
