@@ -51,7 +51,10 @@ color: #eeeeee;
       .djhrjh{
         border-left: 2px solid #2d4059;
       }
-      
+      .item-active {
+          background-color: #ff5722;
+          color: white;
+      }
       @media screen and (max-width: 768px) {
         .djhrjh{
           border-left: none;
@@ -70,7 +73,7 @@ color: #eeeeee;
 
     <header class=" d-flex align-items-center" style="background-color: #2d4059; margin-left: 0; height: 88px;">
       <div style="width: 260px;"></div>
-       <h1 class="fw-bold text-light" >Administration</h1>
+       <h1 class="fw-bold text-light ps-3" >Administration</h1>
      </header>
               <!-- Content -->
               <main class=" main-content" style="background-color: #222831; color: #fff; min-height: 100vh;">
@@ -102,6 +105,14 @@ function myFunction() {
       }
     }
   }
+  const items = document.querySelectorAll('.nav-link');
+
+items.forEach(item => {
+    item.addEventListener('click', () => {
+        item.classList.toggle('item-active');
+    });
+});
+
     </script>
 
       <script src="{% static 'js/script.js' %}"></script>
