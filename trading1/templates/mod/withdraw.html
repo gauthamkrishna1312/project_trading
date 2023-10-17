@@ -1,0 +1,71 @@
+{% extends 'mod/admbase.html' %}
+
+{% block title%}
+ADMIN WITHDRAW
+{% endblock %}
+
+{% block content%}
+
+<ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul>
+<div>
+<h1> WITHDRAW </h1>
+</div>  
+<nav>
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_withdraw' status='pending' %}"><i class="fa-solid fa-angles-left"></i> PENDING</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_withdraw' status='done' %}"> DONE</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'mod_withdraw' status='rejected' %}">REJECTED  <i class="fa-solid fa-angles-right"></i></a></li>
+  </ul>
+</nav>
+<div style="overflow-y: scroll;">
+
+<table class="table table-dark table-striped">
+  <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">USERNAME</th>
+        <th scope="col">AMOUNT</th>
+        <th scope="col">NAME</th>
+        <th scope="col">ACC NO/ WALLET ID</th>
+        <th scope="col">IFSC CODE</th>
+        <th scope="col">STATUS</th>
+        {% if status == 'pending' %}
+        <th scope="col">ACTION</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for withdraw in withdraws %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ withdraw.user.username }}</td>
+        <td>{{ withdraw.withdraw_amount }}</td>
+        <td>{{ withdraw.account_name }}</td>
+        {% if withdraw.account_no != None %}
+        <td>{{ withdraw.account_no }}</td>
+        {% elif withdraw.account_no == None %}
+        <td>{{ withdraw.wallet_id }}</td>
+        {% endif %}
+        <td>
+        {% if withdraw.ifsc_code != None %}
+        {{ withdraw.ifsc_code }}
+        {% endif %}
+        </td>
+        <td>{{ withdraw.withdraw_status }}</td>
+        <td>
+          {% if withdraw.withdraw_status == 'pending' %}
+          <a href="{% url 'mod_withdraw_action' action='done' id=withdraw.id %}" > DONE </a>
+          <a href="{% url 'mod_withdraw_action' action='rejected' id=withdraw.id %}" > REJECT </a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    
+    </tbody>
+  </table>
+  </div>
+{% endblock %}

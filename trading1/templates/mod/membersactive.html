@@ -1,0 +1,43 @@
+{% extends 'mod/admbase.html' %}
+
+{% block title%}
+ADMIN ACTIVE USERS
+{% endblock %}
+
+{% block content%}
+<div>
+<h1> ACTIVE USERS</h1>
+<br>
+<div style="overflow-y: scroll;">
+
+<table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">USERNAME</th>
+        <th scope="col">PLAN</th>
+        <th scope="col">AMOUT</th>
+        <th scope="col">PROFIT</th>
+        <th scope="col">REFFERED BY</th>
+        <th scope="col">HISTORY</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member, refferd in members %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ member.user.username }}</td>
+        <td>{{ member.plan.plan_name }}</td>
+        <td>{{ member.invested_amount }}</td>
+        <td>{{ member.user_profit }}</td>
+        <td>{{ refferd.referred_user.username }}</td>
+        <td>
+        <a href="{% url 'mod_history' id=member.user.id action='payments' %}" class="btn btn-secondary"> view </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

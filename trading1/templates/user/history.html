@@ -1,0 +1,62 @@
+{% extends 'user/base.html' %}
+
+{% block title%}
+ADMIN WITHDRAW
+{% endblock %}
+
+{% block content%}
+<div>
+<h1> HISTORY </h1>
+<br>
+<nav>
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'history' action='payments' %}"><i class="fa-solid fa-angles-left"></i> DEPOSIT</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'history' action='withdraws' %}">WITHDRAWAL</a></li>
+    <li class="page-item"><a class="page-link text-light"  style="background-color: #222831;" href="{% url 'history' action='profit' %}">PROFIT <i class="fa-solid fa-angles-right"></i></a></li>
+  </ul>
+</nav>
+<table class="table table-dark table-striped">
+  <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">AMOUNT</th>
+        <th scope="col">DATE</th>
+        <th scope="col">STATUS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if action == 'payments' %}
+      {% for payment in payments %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ payment.transaction_amount }}</td>
+        <td>Otto</td>
+        <td>{{ payment.transaction_status }}</td>
+      </tr>
+      {% endfor %}
+
+      {% elif action == 'withdraws' %}
+      {% for withdraw in withdraws %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ withdraw.withdraw_amount }}</td>
+        <td>Otto</td>
+        <td>{{ withdraw.withdraw_status }}</td>
+      </tr>
+      {% endfor %}
+
+      {% elif action == 'profit' %}
+      {% for addprofit in addprofits %}
+      <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ addprofit.profit }}</td>
+        <td>Otto</td>
+        <td></td>
+      </tr>
+      {% endfor %}
+
+      {% endif %}
+    
+    </tbody>
+  </table>
+{% endblock %}

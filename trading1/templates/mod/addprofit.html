@@ -1,0 +1,76 @@
+{% extends 'mod/admbase.html' %}
+
+{% block title%}
+ADMIN ADD PROFIT
+{% endblock %}
+
+{% block content%}
+
+<ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul>
+
+<div>
+<h1> ADMIN ADD PROFIT</h1>
+<br>
+<div class="row">
+  <div class="col-md">
+    <div>
+      <h2 class="h2">Plan</h2>
+    
+      <form class=" g-3" style="width: 100%; max-width: 400px;" method="POST">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col" >
+            <!-- <input type="text" class="form-control" placeholder="PLAN NAME" aria-label="First name" name="plan_name"> -->
+            <div style="background-color: #eeeeee; border-radius: 7px; color: black;">
+    
+              <select id="plans" name="uname" style="width: 100%; height: 40px; border-radius: inherit;">
+                <option value="" disabled selected>Select a plan</option>
+                {% for plan in plans %}
+                <option value="{{ plan.plan_name }}">{{ plan.plan_name }}</option>
+                {% endfor %}
+            </select>
+            
+            </div>
+          </div>
+        </div>
+        <input type="text" class="form-control my-2" placeholder="PERCENTAGE" aria-label="PERCENTAGE" name="percentage">
+        <input type="text" class="form-control my-2" placeholder="DAYS" aria-label="DAYS" name="days">
+        <button type="submit" class="btn btn-secondary">ADD</button>
+      </form>
+    </div>
+    <br>
+  </div>
+  <div class="col-md">
+    <div>
+      <h2 class="h2">User</h2>
+      <form class=" g-3" style="width: 100%; max-width: 400px;" method="POST">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col">
+            <div style="background-color: #eeeeee; border-radius: 7px; color: black;">
+    
+              <select id="plans" name="uname" style="width: 100%; height: 40px; border-radius: inherit;">
+                <option value="" disabled selected>Select a user</option>
+    
+                {% for member in members %}
+                <option value="{{ member.username }}">{{ member.username }}</option>
+                {% endfor %}
+              </select>
+            </div>      
+          </div>
+        </div>
+        <input type="text" class="form-control my-2" placeholder="AMOUNT" aria-label="PERCENTAGE" name="amount">
+        <input type="text" class="form-control my-2" placeholder="DAYS" aria-label="DAYS" name="days">
+        <button type="submit" class="btn btn-secondary">ADD</button>
+      </form>
+    </div>
+    
+  </div>
+</div>
+
+
+{% endblock %}

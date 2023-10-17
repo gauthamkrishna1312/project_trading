@@ -1,0 +1,49 @@
+{% extends 'user/base.html' %}
+
+{% block title%}
+PAYMENT
+{% endblock %}
+
+{% block content%}
+
+{% load static %}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card" style="width: 18rem; margin: 0 auto;">
+            <img src="{% static '/img/pay.jpg' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text fw-light text-center">0x2A56BDeF1C09Dc8d0bF1f157cbd271c79ee3723b</p>
+                <h4 class="text-center fw-bold">WARNING</h4>
+                <p class="card-text">Send only <span class="fw-bold">Tether USD (BEP20)</span> to this address.</p>
+                <p class="card-text">Sending any other coins may result in permanent loss.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md">
+        <form style="width: 100%; max-width: 400px;" class="mx-auto mt-5" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label text-white">NAME</label>
+                <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Enter your name" name="transaction_name">
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput2" class="form-label text-white">TRANSACTION ID</label>
+                <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Enter transaction ID" name="transaction_id">
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput3" class="form-label text-white">AMOUNT</label>
+                <input type="number" class="form-control" id="formGroupExampleInput3" placeholder="Enter amount" name="amount">
+            </div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-secondary">SUBMIT</button>
+            </div>
+        </form>
+    </div>
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'mod/admbase.html' %}
+
+{% block title%}
+PLANS
+{% endblock %}
+
+{% block content%}
+<div>
+<h1> PLANS</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class="row">
+    {% for plan in plans %}
+    <div class="col-md">
+        <a href="{% url 'mod_edit_plan' plan_id=plan.id %}" class="card text-white mb-3 custom-link" style="max-width: 18rem; text-decoration: none; border: 2px solid #ff5722; border-radius: 5px; transition: transform 0.2s; background-color: #2d4059;">
+            <div class="card-body">
+                <h4 class="card-title text-center"><strong>{{ plan.plan_name }}</strong></h4>
+            <h4 class="card-title text-center"><strong>$ {{ plan.plan_min_price }} - $ {{ plan.plan_max_price }}</strong></h4>
+                <p class="card-text text-center" style="font-size: 1.2em;">({{ plan.plan_min_percentage }}% - {{ plan.plan_max_percentage }}%)</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+    
+</div>
+    
+{% endblock %}
